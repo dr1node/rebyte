@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Menu, Search, X } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
 import { tools } from '../lib/tools';
+import { setBodyScrollLocked } from '../lib/bodyScrollLock';
 
 const navigation = [
   { label: 'Home', href: '/' },
@@ -34,7 +35,10 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (!searchOpen) return;
+    if (!searchOpen) {
+      setBodyScrollLocked(false);
+      return;
+    }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -43,12 +47,12 @@ export default function Navbar() {
       }
     };
 
-    document.body.style.overflow = 'hidden';
+    setBodyScrollLocked(true);
     searchInputRef.current?.focus();
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.body.style.overflow = '';
+      setBodyScrollLocked(false);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [searchOpen]);

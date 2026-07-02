@@ -25,14 +25,7 @@ export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps)
   useEffect(() => {
     if (open) {
       setMounted(true);
-      document.body.style.overflow = 'hidden';
     }
-
-    return () => {
-      if (!open) {
-        document.body.style.overflow = '';
-      }
-    };
   }, [open]);
 
   useEffect(() => {
@@ -61,15 +54,15 @@ export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps)
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex">
+    <div className="fixed inset-0 z-50 flex h-screen overflow-hidden">
       <button
         type="button"
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm transition-opacity duration-300"
+        className="absolute inset-0 h-full w-full bg-slate-950/40 backdrop-blur-sm transition-opacity duration-300"
         aria-label="Close navigation menu"
         onClick={handleClose}
       />
       <aside
-        className={`relative ml-auto flex w-full max-w-xs flex-col overflow-y-auto border-l border-slate-200/70 bg-white px-6 py-6 shadow-soft transition-transform duration-300 dark:border-slate-800/70 dark:bg-slate-950 ${open ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`relative ml-auto flex h-full max-h-screen min-h-0 w-full max-w-xs flex-col overflow-y-auto overscroll-contain border-l border-slate-200/70 bg-white px-6 py-6 shadow-soft transition-transform duration-300 dark:border-slate-800/70 dark:bg-slate-950 ${open ? 'translate-x-0' : 'translate-x-full'}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="mobile-navigation-title"
