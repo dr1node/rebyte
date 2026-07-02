@@ -1,0 +1,7 @@
+{
+  "extends": ["next/core-web-vitals", "eslint:recommended"],
+  "rules": {
+    "@next/next/no-img-element": "off",
+    "react/react-in-jsx-scope": "off"
+  }
+}
