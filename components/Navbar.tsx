@@ -1,12 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, Search, X } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
 import { tools } from '../lib/tools';
 import { setBodyScrollLocked } from '../lib/bodyScrollLock';
+import logoImage from '../img/ReByte navbar logo.png';
 
 const navigation = [
   { label: 'Home', href: '/' },
@@ -109,11 +111,17 @@ export default function Navbar() {
         } backdrop-blur-xl`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <Link href="/" className="flex items-center gap-3 text-slate-900 dark:text-white">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-soft">R</span>
-            <div className="hidden min-w-0 flex-col sm:flex">
-              <p className="truncate text-sm font-semibold">ReByte</p>
-              <p className="truncate text-xs text-slate-500 dark:text-slate-400">Utility tools suite</p>
+          <Link href="/" className="flex min-w-0 items-center text-slate-900 dark:text-white" aria-label="ReByte home">
+            <div className="relative flex h-9 items-center justify-center sm:h-10 md:h-11">
+              <Image
+                src={logoImage}
+                alt="ReByte logo"
+                width={320}
+                height={100}
+                priority
+                sizes="(max-width: 640px) 152px, (max-width: 1024px) 192px, 208px"
+                className="h-full w-auto max-w-[152px] object-contain sm:max-w-[192px] md:max-w-[208px]"
+              />
             </div>
           </Link>
 

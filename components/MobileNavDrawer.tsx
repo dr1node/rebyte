@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FileText, Home, Info, ShieldCheck, Wrench, X } from 'lucide-react';
+import logoImage from '../img/ReByte navbar logo.png';
 
 const menuItems = [
   { label: 'Home', href: '/', Icon: Home },
@@ -69,10 +71,15 @@ export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps)
       >
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-soft">R</span>
-            <div>
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">ReByte</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Utility tools suite</p>
+            <div className="relative flex h-9 items-center justify-center sm:h-10">
+              <Image
+                src={logoImage}
+                alt="ReByte logo"
+                width={320}
+                height={100}
+                sizes="152px"
+                className="h-full w-auto max-w-[152px] object-contain sm:max-w-[190px]"
+              />
             </div>
           </div>
           <button

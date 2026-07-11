@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: 'ReByte — Free Online Utility Tools',
   description: 'Fast, privacy-friendly online tools for developers, students, and everyone.',
   metadataBase: new URL('https://rebyte.example'),
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
   openGraph: {
     title: 'ReByte — Free Online Utility Tools',
     description: 'Fast, privacy-friendly online tools for developers, students, and everyone.',
