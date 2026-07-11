@@ -33,7 +33,7 @@ export default function HomeSection() {
                   Fast, privacy-friendly tools for developers, students, and everyone.
                 </h1>
                 <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
-                  A modern suite of utility tools built for performance, accessibility, and scalability without databases atau login.
+                  A modern suite of utility tools built for performance, accessibility, and scalability without databases or login.
                 </p>
               </div>
               <div className="max-w-xl">
