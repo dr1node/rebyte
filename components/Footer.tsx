@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { categories } from '../lib/tools';
 import { useLanguage } from '../lib/LanguageContext';
+import LocalizedText from './LocalizedText';
 
 const footerLinks = [
   { label: 'About', href: '/about' },
@@ -21,7 +22,7 @@ export default function Footer() {
         <div>
           <p className="text-lg font-semibold text-slate-900 dark:text-white">ReByte</p>
           <p className="mt-3 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-400">
-            A modern collection of free utilities for developers, students, and creators.
+            <LocalizedText en="A modern collection of free utilities for developers, students, and creators." id="Kumpulan utilitas modern dan gratis untuk developer, pelajar, dan kreator." />
           </p>
         </div>
 
@@ -29,7 +30,9 @@ export default function Footer() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 dark:text-slate-100">{t('categories')}</p>
           <div className="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-400">
             {categories.map((category) => (
-              <p key={category.key}>{category.label}</p>
+              <Link key={category.key} href={`/tools?category=${category.key}`} className="block transition hover:text-sky-600 dark:hover:text-white">
+                {category.label}
+              </Link>
             ))}
           </div>
         </div>
@@ -52,7 +55,7 @@ export default function Footer() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 dark:text-slate-100">{t('developer')}</p>
           <div className="mt-4 space-y-3">
             <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
-              ReByte is independently designed and developed by Regi.
+              <LocalizedText en="ReByte is independently designed and developed by Regi." id="ReByte dirancang dan dikembangkan secara mandiri oleh Regi." />
             </p>
             <a
               href={portfolioUrl}
@@ -67,7 +70,7 @@ export default function Footer() {
       </div>
 
       <div className="mx-auto mt-10 max-w-7xl text-sm text-slate-500 dark:text-slate-400">
-        © {new Date().getFullYear()} ReByte. Built for fast and privacy-friendly utility experiences.
+        © {new Date().getFullYear()} ReByte. <LocalizedText en="Built for fast and privacy-friendly utility experiences." id="Dibuat untuk pengalaman utilitas yang cepat dan ramah privasi." />
       </div>
     </footer>
   );

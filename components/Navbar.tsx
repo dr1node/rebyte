@@ -206,11 +206,11 @@ export default function Navbar() {
                     className="flex w-full items-start justify-between rounded-2xl border border-transparent px-4 py-3 text-left transition hover:border-slate-200 hover:bg-slate-50 dark:hover:border-slate-800 dark:hover:bg-slate-900"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{getLocalizedTool(tool, language).name}</p>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{tool.name}</p>
                       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{getLocalizedTool(tool, language).description}</p>
                     </div>
                     <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-600 dark:bg-sky-950/50 dark:text-sky-300">
-                      {getLocalizedTool(tool, language).category}
+                      {tool.category}
                     </span>
                   </button>
                 ))
