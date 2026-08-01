@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, type ChangeEvent } from 'react';
+import { useState } from 'react';
+import FileDropzone from '../FileDropzone';
 
 export default function JsonFormatterTool() {
   const [input, setInput] = useState('');
@@ -54,8 +55,8 @@ export default function JsonFormatterTool() {
     URL.revokeObjectURL(url);
   };
 
-  const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null;
+  const handleFileUpload = async (files: File[]) => {
+    const file = files[0] ?? null;
     if (!file) return;
     if (!file.type.includes('json') && !file.name.endsWith('.json')) {
       setError('Please upload a valid JSON file.');
@@ -77,15 +78,7 @@ export default function JsonFormatterTool() {
         <div className="space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-semibold text-slate-900 dark:text-white">JSON Input</p>
-            <label className="inline-flex cursor-pointer items-center rounded-3xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200">
-              Upload JSON
-              <input
-                type="file"
-                accept="application/json,.json"
-                onChange={handleFileUpload}
-                className="sr-only"
-              />
-            </label>
+            <FileDropzone label="Upload JSON" accept="application/json,.json" onFiles={handleFileUpload} />
           </div>
           <textarea
             value={input}

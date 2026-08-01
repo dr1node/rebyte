@@ -6,13 +6,14 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FileText, Home, Info, ShieldCheck, Wrench, X } from 'lucide-react';
 import logoImage from '../img/ReByte navbar logo.png';
+import { useLanguage } from '../lib/LanguageContext';
 
 const menuItems = [
-  { label: 'Home', href: '/', Icon: Home },
-  { label: 'Tools', href: '/tools', Icon: Wrench },
-  { label: 'About', href: '/about', Icon: Info },
-  { label: 'Privacy Policy', href: '/privacy', Icon: ShieldCheck },
-  { label: 'Terms of Service', href: '/terms', Icon: FileText },
+  { key: 'home', href: '/', Icon: Home },
+  { key: 'tools', href: '/tools', Icon: Wrench },
+  { key: 'about', href: '/about', Icon: Info },
+  { key: 'privacy', href: '/privacy', Icon: ShieldCheck },
+  { key: 'terms', href: '/terms', Icon: FileText },
 ] as const;
 
 interface MobileNavDrawerProps {
@@ -22,6 +23,7 @@ interface MobileNavDrawerProps {
 
 export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(open);
 
   useEffect(() => {
@@ -93,7 +95,7 @@ export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps)
         </div>
 
         <div className="mt-8 space-y-3">
-          {menuItems.map(({ href, Icon, label }) => {
+          {menuItems.map(({ href, Icon, key }) => {
             const isActive = pathname === href;
 
             return (
@@ -108,7 +110,7 @@ export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps)
                 }`}
               >
                 <Icon className={`h-5 w-5 ${isActive ? 'text-sky-600 dark:text-sky-400' : 'text-slate-500 dark:text-slate-400'}`} aria-hidden="true" />
-                {label}
+                {t(key)}
               </Link>
             );
           })}

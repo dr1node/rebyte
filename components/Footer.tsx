@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { categories } from '../lib/tools';
+import { useLanguage } from '../lib/LanguageContext';
 
 const footerLinks = [
   { label: 'About', href: '/about' },
@@ -10,6 +13,8 @@ const footerLinks = [
 const portfolioUrl = 'https://itsrex.xo.je/';
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="border-t border-slate-200/80 bg-white/80 px-4 py-10 shadow-[0_-10px_35px_-28px_rgba(15,23,42,0.16)] backdrop-blur-sm dark:border-slate-800/70 dark:bg-slate-950 sm:px-6">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.25fr_0.8fr_0.8fr_0.9fr]">
@@ -21,7 +26,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 dark:text-slate-100">Categories</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 dark:text-slate-100">{t('categories')}</p>
           <div className="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-400">
             {categories.map((category) => (
               <p key={category.key}>{category.label}</p>
@@ -30,18 +35,21 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 dark:text-slate-100">Links</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 dark:text-slate-100">{t('links')}</p>
           <div className="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-400">
+            <Link href="/#feedback" className="block transition hover:text-sky-600 dark:hover:text-white">
+              {t('feedback')}
+            </Link>
             {footerLinks.map((link) => (
               <Link key={link.href} href={link.href} className="inline-block transition hover:text-sky-600 dark:hover:text-white">
-                {link.label}
+                {link.label === 'Privacy' ? t('privacy') : link.label === 'Terms' ? t('terms') : t('about')}
               </Link>
             ))}
           </div>
         </div>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 dark:text-slate-100">Developer</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-900 dark:text-slate-100">{t('developer')}</p>
           <div className="mt-4 space-y-3">
             <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
               ReByte is independently designed and developed by Regi.
@@ -52,7 +60,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-3xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
             >
-              Visit Portfolio
+              {t('visitPortfolio')}
             </a>
           </div>
         </div>

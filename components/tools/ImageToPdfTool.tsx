@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, type ChangeEvent } from 'react';
+import { useState } from 'react';
 import { jsPDF } from 'jspdf';
+import FileDropzone from '../FileDropzone';
 
 export default function ImageToPdfTool() {
   const [file, setFile] = useState<File | null>(null);
@@ -10,8 +11,8 @@ export default function ImageToPdfTool() {
   const [fileName, setFileName] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0] ?? null;
+  const handleUpload = (files: File[]) => {
+    const selectedFile = files[0] ?? null;
     if (!selectedFile) return;
 
     if (!selectedFile.type.startsWith('image/')) {
@@ -76,15 +77,7 @@ export default function ImageToPdfTool() {
       </div>
 
       <div className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft dark:border-slate-800/70 dark:bg-slate-950">
-        <label className="block text-sm font-semibold text-slate-900 dark:text-white">
-          Upload image file
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleUpload}
-            className="mt-3 w-full rounded-3xl border border-slate-200/80 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-          />
-        </label>
+        <FileDropzone label="Upload image file" accept="image/*" onFiles={handleUpload} />
 
         {fileName ? (
           <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">Selected file: {fileName}</p>

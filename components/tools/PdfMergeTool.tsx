@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, type ChangeEvent } from 'react';
+import { useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
+import FileDropzone from '../FileDropzone';
 
 const formatBytes = (bytes: number) => {
   if (bytes === 0) return '0 B';
@@ -16,8 +17,7 @@ export default function PdfMergeTool() {
   const [error, setError] = useState('');
   const [merging, setMerging] = useState(false);
 
-  const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = event.target.files ? Array.from(event.target.files) : [];
+  const handleUpload = (selectedFiles: File[]) => {
     const pdfFiles = selectedFiles.filter((file) => file.type === 'application/pdf');
 
     if (!pdfFiles.length) {
@@ -77,16 +77,7 @@ export default function PdfMergeTool() {
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft dark:border-slate-800/70 dark:bg-slate-950">
-          <label className="block text-sm font-semibold text-slate-900 dark:text-white">
-            Upload PDF files
-            <input
-              type="file"
-              accept="application/pdf"
-              multiple
-              onChange={handleUpload}
-              className="mt-3 w-full rounded-3xl border border-slate-200/80 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-            />
-          </label>
+          <FileDropzone label="Upload PDF files" accept="application/pdf" multiple onFiles={handleUpload} />
 
           {error ? (
             <p className="mt-4 rounded-3xl border border-rose-300/70 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-600/60 dark:bg-rose-900/30 dark:text-rose-200">

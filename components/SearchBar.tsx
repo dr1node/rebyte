@@ -2,6 +2,7 @@
 
 import { useState, type ChangeEvent } from 'react';
 import type { Tool } from '../lib/tools';
+import { useLanguage } from '../lib/LanguageContext';
 
 type CategoryOption = {
   key: string;
@@ -29,6 +30,7 @@ export default function SearchBar({
   onCategoryChange,
 }: SearchBarProps) {
   const [query, setQuery] = useState('');
+  const { t } = useLanguage();
 
   const filterTools = (value: string, category: string) => {
     const normalized = value.toLowerCase().trim();
@@ -61,7 +63,7 @@ export default function SearchBar({
   return (
     <div className="space-y-4">
       <label htmlFor="tool-search" className="sr-only">
-        Search tools
+        {t('search')}
       </label>
       <div className="grid gap-4 sm:grid-cols-[1.8fr_1fr]">
         <input
@@ -69,18 +71,18 @@ export default function SearchBar({
           type="search"
           value={query}
           onChange={handleQueryChange}
-          placeholder="Search tools, categories, or descriptions..."
+          placeholder={t('searchTools')}
           className="w-full rounded-3xl border border-slate-200/80 bg-white/95 px-5 py-4 text-sm text-slate-900 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.3)] outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:focus:border-sky-400 dark:focus:ring-slate-800"
-          aria-label="Search tools"
+          aria-label={t('search')}
         />
         <label className="relative block">
-          <span className="sr-only">Category filter</span>
+          <span className="sr-only">{t('categories')}</span>
           <select
             value={selectedCategory}
             onChange={handleCategoryChange}
             className="w-full appearance-none rounded-3xl border border-slate-200/80 bg-white/95 px-5 py-4 text-sm text-slate-900 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.3)] outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:focus:border-sky-400 dark:focus:ring-slate-800"
           >
-            <option value="">All categories</option>
+            <option value="">{t('allCategories')}</option>
             {categories.map((category) => (
               <option key={category.key} value={category.key}>
                 {category.label}

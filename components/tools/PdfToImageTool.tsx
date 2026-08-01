@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, type ChangeEvent } from 'react';
+import { useState } from 'react';
 // @ts-ignore
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import FileDropzone from '../FileDropzone';
 
 export default function PdfToImageTool() {
   const [file, setFile] = useState<File | null>(null);
@@ -11,8 +12,8 @@ export default function PdfToImageTool() {
   const [error, setError] = useState('');
   const [processing, setProcessing] = useState(false);
 
-  const handleUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0] ?? null;
+  const handleUpload = async (files: File[]) => {
+    const selectedFile = files[0] ?? null;
     if (!selectedFile) return;
     if (selectedFile.type !== 'application/pdf') {
       setError('Please upload a valid PDF file.');
@@ -76,15 +77,7 @@ export default function PdfToImageTool() {
       <div className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft dark:border-slate-800/70 dark:bg-slate-950">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-6">
-            <label className="block text-sm font-semibold text-slate-900 dark:text-white">
-              Upload PDF file
-              <input
-                type="file"
-                accept="application/pdf"
-                onChange={handleUpload}
-                className="mt-3 w-full rounded-3xl border border-slate-200/80 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-              />
-            </label>
+            <FileDropzone label="Upload PDF file" accept="application/pdf" onFiles={handleUpload} />
 
             <div className="rounded-3xl border border-slate-200/80 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-900">
               <p className="text-sm font-semibold text-slate-900 dark:text-white">Output format</p>

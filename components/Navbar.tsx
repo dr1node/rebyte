@@ -6,19 +6,24 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, Search, X } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
+import ThemeToggle from './ThemeToggle';
+import LanguageToggle from './LanguageToggle';
+import { useLanguage } from '../lib/LanguageContext';
+import { getLocalizedTool } from '../lib/toolTranslations';
 import { tools } from '../lib/tools';
 import { setBodyScrollLocked } from '../lib/bodyScrollLock';
 import logoImage from '../img/ReByte navbar logo.png';
 
 const navigation = [
-  { label: 'Home', href: '/' },
-  { label: 'Tools', href: '/tools' },
-  { label: 'About', href: '/about' },
-];
+  { key: 'home', href: '/' },
+  { key: 'tools', href: '/tools' },
+  { key: 'about', href: '/about' },
+] as const;
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { language, t } = useLanguage();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -92,10 +97,10 @@ export default function Navbar() {
               : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white'
           }`}
         >
-          {item.label}
+          {t(item.key)}
         </Link>
       )),
-    [pathname]
+    [pathname, t]
   );
 
   const controlButtonClassName =
@@ -130,10 +135,12 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <LanguageToggle />
             <button
               type="button"
               className={controlButtonClassName}
-              aria-label="Open search"
+              aria-label={t('openSearch')}
               onClick={() => setSearchOpen(true)}
             >
               <Search className="h-5 w-5" />
@@ -141,7 +148,7 @@ export default function Navbar() {
             <button
               type="button"
               className={`${controlButtonClassName} md:hidden`}
-              aria-label="Open navigation menu"
+              aria-label={t('openMenu')}
               onClick={() => setDrawerOpen(true)}
             >
               <Menu className="h-5 w-5" />
@@ -155,7 +162,7 @@ export default function Navbar() {
           <button
             type="button"
             className="absolute inset-0"
-            aria-label="Close search"
+            aria-label={t('closeSearch')}
             onClick={() => {
               setSearchOpen(false);
               setSearchQuery('');
@@ -163,7 +170,7 @@ export default function Navbar() {
           />
           <div className="relative w-full max-w-2xl rounded-[28px] border border-slate-200 bg-white p-4 shadow-2xl dark:border-slate-800 dark:bg-slate-950">
             <h2 id="tool-search-title" className="sr-only">
-              Search tools
+              {t('search')}
             </h2>
             <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-800 dark:bg-slate-900">
               <Search className="h-5 w-5 text-slate-500 dark:text-slate-400" />
@@ -172,9 +179,9 @@ export default function Navbar() {
                 type="search"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search tools, categories, or descriptions"
+                placeholder={t('searchTools')}
                 className="flex-1 border-none bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-white"
-                aria-label="Search tools"
+                aria-label={t('search')}
               />
               <button
                 type="button"
@@ -183,7 +190,7 @@ export default function Navbar() {
                   setSearchQuery('');
                 }}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-200 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
-                aria-label="Close search"
+                aria-label={t('closeSearch')}
               >
                 <X className="h-4 w-4" />
               </button>
@@ -199,17 +206,17 @@ export default function Navbar() {
                     className="flex w-full items-start justify-between rounded-2xl border border-transparent px-4 py-3 text-left transition hover:border-slate-200 hover:bg-slate-50 dark:hover:border-slate-800 dark:hover:bg-slate-900"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{tool.name}</p>
-                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tool.description}</p>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{getLocalizedTool(tool, language).name}</p>
+                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{getLocalizedTool(tool, language).description}</p>
                     </div>
                     <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-600 dark:bg-sky-950/50 dark:text-sky-300">
-                      {tool.category}
+                      {getLocalizedTool(tool, language).category}
                     </span>
                   </button>
                 ))
               ) : (
                 <div className="rounded-2xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
-                  No tools found for this search.
+                  {t('noToolsFound')}
                 </div>
               )}
             </div>

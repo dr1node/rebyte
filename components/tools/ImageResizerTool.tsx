@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState, type ChangeEvent, type SyntheticEvent } from 'react';
+import { useEffect, useState, type SyntheticEvent } from 'react';
+import FileDropzone from '../FileDropzone';
 
 export default function ImageResizerTool() {
   const [width, setWidth] = useState('800');
@@ -20,8 +21,8 @@ export default function ImageResizerTool() {
     };
   }, [fileUrl]);
 
-  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileUpload = (files: File[]) => {
+    const file = files[0];
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
@@ -89,16 +90,9 @@ export default function ImageResizerTool() {
               <p className="text-sm font-semibold text-slate-900 dark:text-white">Upload Image</p>
               <p className="text-sm text-slate-600 dark:text-slate-300">Use any photo file from your device.</p>
             </div>
-            <label className="inline-flex cursor-pointer items-center rounded-3xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200">
-              Select file
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileUpload}
-                className="sr-only"
-              />
-            </label>
+            <span className="text-xs text-slate-500 dark:text-slate-400">Image files only</span>
           </div>
+          <FileDropzone label="Select or drop an image" accept="image/*" onFiles={handleFileUpload} />
           {imageName ? (
             <p className="text-sm text-slate-600 dark:text-slate-300">Selected: {imageName}</p>
           ) : null}

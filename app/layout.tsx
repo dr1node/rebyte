@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import './globals.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { LanguageProvider } from '../lib/LanguageContext';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'ReByte — Free Online Utility Tools',
@@ -29,10 +31,44 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className="min-h-screen bg-transparent text-slate-100 antialiased">
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  var storedTheme = localStorage.getItem('rebyte-theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var isDark = storedTheme === 'dark' || (storedTheme !== 'light' && prefersDark);
+                  document.documentElement.classList.toggle('dark', isDark);
+                  document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+                } catch (_) {}
+              })();
+            `,
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  var storedLanguage = localStorage.getItem('rebyte-language');
+                  var language = storedLanguage === 'id' ? 'id' : 'en';
+                  document.documentElement.dataset.language = language;
+                  document.documentElement.lang = language;
+                } catch (_) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-transparent text-slate-900 antialiased dark:text-slate-100">
+        <LanguageProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </LanguageProvider>
+        <Analytics />
       </body>
     </html>
   );

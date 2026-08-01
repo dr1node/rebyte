@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { useEffect, useState } from 'react';
+import FileDropzone from '../FileDropzone';
 
 const formatBytes = (bytes: number) => {
   if (bytes === 0) return '0 B';
@@ -28,8 +29,8 @@ export default function ImageCompressorTool() {
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  const handleUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0] ?? null;
+  const handleUpload = (files: File[]) => {
+    const selectedFile = files[0] ?? null;
     if (!selectedFile) return;
 
     if (!selectedFile.type.startsWith('image/')) {
@@ -100,15 +101,7 @@ export default function ImageCompressorTool() {
       <div className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft dark:border-slate-800/70 dark:bg-slate-950">
         <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
           <div className="space-y-6">
-            <label className="block text-sm font-semibold text-slate-900 dark:text-white">
-              Upload image file
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleUpload}
-                className="mt-3 w-full rounded-3xl border border-slate-200/80 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-              />
-            </label>
+            <FileDropzone label="Upload image file" accept="image/*" onFiles={handleUpload} />
 
             {error ? (
               <p className="rounded-3xl border border-rose-300/70 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-600/60 dark:bg-rose-900/30 dark:text-rose-200">

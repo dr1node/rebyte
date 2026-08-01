@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState, type ChangeEvent } from 'react';
+import { useMemo, useState } from 'react';
+import FileDropzone from '../FileDropzone';
 
 export default function TextCaseConverterTool() {
   const [text, setText] = useState('Type or paste text here to convert case.');
@@ -15,8 +16,8 @@ export default function TextCaseConverterTool() {
     return text;
   }, [mode, text]);
 
-  const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-    const selected = event.target.files?.[0] ?? null;
+  const handleFileUpload = async (files: File[]) => {
+    const selected = files[0] ?? null;
     if (!selected) return;
 
     try {
@@ -48,14 +49,7 @@ export default function TextCaseConverterTool() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4">
-        <label className="space-y-3">
-          <span className="text-sm font-semibold text-slate-900 dark:text-white">Upload text file</span>
-          <input
-            type="file"
-            onChange={handleFileUpload}
-            className="w-full rounded-3xl border border-slate-200/80 bg-white px-4 py-4 text-sm text-slate-900 outline-none transition file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-          />
-        </label>
+        <FileDropzone label="Upload text file" accept="text/*,.txt,.md,.csv" onFiles={handleFileUpload} />
 
         {fileName ? (
           <p className="text-sm text-slate-500 dark:text-slate-400">Loaded file: {fileName}</p>

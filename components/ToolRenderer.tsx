@@ -2,8 +2,13 @@ import type { ComponentType } from 'react';
 import dynamic from 'next/dynamic';
 
 const JsonFormatterTool = dynamic(() => import('./tools/JsonFormatterTool'), { ssr: false });
+const ColorPickerConverterTool = dynamic(() => import('./tools/ColorPickerConverterTool'), { ssr: false });
+const TimestampConverterTool = dynamic(() => import('./tools/TimestampConverterTool'), { ssr: false });
+const TextDiffCheckerTool = dynamic(() => import('./tools/TextDiffCheckerTool'), { ssr: false });
 const MarkdownPreviewTool = dynamic(() => import('./tools/MarkdownPreviewTool'), { ssr: false });
 const TextCaseConverterTool = dynamic(() => import('./tools/TextCaseConverterTool'), { ssr: false });
+const WordCounterTool = dynamic(() => import('./tools/WordCounterTool'), { ssr: false });
+const LoremIpsumGeneratorTool = dynamic(() => import('./tools/LoremIpsumGeneratorTool'), { ssr: false });
 const CalculatorTool = dynamic(() => import('./tools/CalculatorTool'), { ssr: false });
 const PingTestTool = dynamic(() => import('./tools/PingTestTool'), { ssr: false });
 const ImageResizerTool = dynamic(() => import('./tools/ImageResizerTool'), { ssr: false });
@@ -14,6 +19,7 @@ const ImageConverterTool = dynamic(() => import('./tools/ImageConverterTool'), {
 const ImageToPdfTool = dynamic(() => import('./tools/ImageToPdfTool'), { ssr: false });
 const ImageCompressorTool = dynamic(() => import('./tools/ImageCompressorTool'), { ssr: false });
 const ImageCropperTool = dynamic(() => import('./tools/ImageCropperTool'), { ssr: false });
+const ImageRotatorFlipperTool = dynamic(() => import('./tools/ImageRotatorFlipperTool'), { ssr: false });
 const PdfSplitterTool = dynamic(() => import('./tools/PdfSplitterTool'), { ssr: false });
 const PdfToImageTool = dynamic(() => import('./tools/PdfToImageTool'), { ssr: false });
 const QrCodeGeneratorTool = dynamic(() => import('./tools/QrCodeGeneratorTool'), { ssr: false });
@@ -28,8 +34,13 @@ const Sha256GeneratorTool = dynamic(() => import('./tools/Sha256GeneratorTool'),
 
 const toolComponents: Record<string, ComponentType> = {
   'json-formatter': JsonFormatterTool,
+  'color-picker-converter': ColorPickerConverterTool,
+  'timestamp-converter': TimestampConverterTool,
+  'text-diff-checker': TextDiffCheckerTool,
   'markdown-preview': MarkdownPreviewTool,
   'text-case-converter': TextCaseConverterTool,
+  'word-counter': WordCounterTool,
+  'lorem-ipsum-generator': LoremIpsumGeneratorTool,
   calculator: CalculatorTool,
   'ping-test': PingTestTool,
   'image-resizer': ImageResizerTool,
@@ -40,6 +51,7 @@ const toolComponents: Record<string, ComponentType> = {
   'image-to-pdf': ImageToPdfTool,
   'image-compressor': ImageCompressorTool,
   'image-cropper': ImageCropperTool,
+  'image-rotator-flipper': ImageRotatorFlipperTool,
   'pdf-splitter': PdfSplitterTool,
   'pdf-to-image': PdfToImageTool,
   'qr-code-generator': QrCodeGeneratorTool,

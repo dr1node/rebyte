@@ -1,0 +1,18 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import FileDropzone from '../FileDropzone';
+
+export default function ImageRotatorFlipperTool() {
+  const [source, setSource] = useState('https://via.placeholder.com/800x500.png?text=Your+Image');
+  const [fileName, setFileName] = useState('image.png');
+  const [rotation, setRotation] = useState(0);
+  const [flipX, setFlipX] = useState(false);
+  const [flipY, setFlipY] = useState(false);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  useEffect(() => () => { if (fileUrl) URL.revokeObjectURL(fileUrl); }, [fileUrl]);
+  const handleFile = (files: File[]) => { const file = files[0]; if (!file) return; const url = URL.createObjectURL(file); setSource(url); setFileUrl(url); setFileName(file.name); setError(''); };
+  const download = () => { const image = new Image(); image.onload = () => { const quarterTurn = rotation % 180 !== 0; const canvas = document.createElement('canvas'); canvas.width = quarterTurn ? image.naturalHeight : image.naturalWidth; canvas.height = quarterTurn ? image.naturalWidth : image.naturalHeight; const context = canvas.getContext('2d'); if (!context) return; context.translate(canvas.width / 2, canvas.height / 2); context.rotate((rotation * Math.PI) / 180); context.scale(flipX ? -1 : 1, flipY ? -1 : 1); context.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2); canvas.toBlob((blob) => { if (!blob) return; const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `edited-${fileName}`; link.click(); URL.revokeObjectURL(url); }, 'image/png'); }; image.onerror = () => setError('Unable to process this image. Please choose another file.'); image.src = source; };
+  return <div className="space-y-6"><FileDropzone label="Select or drop an image" accept="image/*" onFiles={handleFile} />{error ? <p className="rounded-3xl border border-rose-300/70 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-600/60 dark:bg-rose-900/30 dark:text-rose-200">{error}</p> : null}<div className="flex flex-wrap gap-3"><button type="button" onClick={() => setRotation((value) => (value + 90) % 360)} className="rounded-3xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white">Rotate 90°</button><button type="button" onClick={() => setFlipX((value) => !value)} className={`rounded-3xl px-5 py-3 text-sm font-semibold ${flipX ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white'}`}>Flip horizontal</button><button type="button" onClick={() => setFlipY((value) => !value)} className={`rounded-3xl px-5 py-3 text-sm font-semibold ${flipY ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white'}`}>Flip vertical</button></div><div className="overflow-hidden rounded-3xl border border-slate-200/70 bg-slate-50 p-6 text-center dark:border-slate-800/70 dark:bg-slate-900/95"><img src={source} alt="Edited preview" className="mx-auto max-h-[28rem] max-w-full object-contain transition-transform duration-300" style={{ transform: `rotate(${rotation}deg) scaleX(${flipX ? -1 : 1}) scaleY(${flipY ? -1 : 1})` }} /></div><button type="button" onClick={download} className="rounded-3xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900">Download image</button></div>;
+}

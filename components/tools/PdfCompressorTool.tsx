@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState, type ChangeEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import FileDropzone from '../FileDropzone';
 
 const formatBytes = (bytes: number) => {
   if (bytes === 0) return '0 B';
@@ -34,8 +35,8 @@ export default function PdfCompressorTool() {
     return Math.max(Math.round(file.size * ratio), 1024);
   }, [file, ratio]);
 
-  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const selected = event.target.files?.[0] ?? null;
+  const handleFileUpload = (files: File[]) => {
+    const selected = files[0] ?? null;
     if (!selected) return;
 
     if (selected.type !== 'application/pdf') {
@@ -72,15 +73,7 @@ export default function PdfCompressorTool() {
 
       <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
         <div className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft dark:border-slate-800/70 dark:bg-slate-950">
-          <label className="space-y-3">
-            <span className="text-sm font-semibold text-slate-900 dark:text-white">Upload PDF</span>
-            <input
-              type="file"
-              accept="application/pdf"
-              onChange={handleFileUpload}
-              className="w-full rounded-3xl border border-slate-200/80 bg-white px-4 py-4 text-sm text-slate-900 outline-none transition file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-            />
-          </label>
+          <FileDropzone label="Upload PDF" accept="application/pdf" onFiles={handleFileUpload} />
 
           <div className="mt-6 space-y-4">
             <div className="space-y-2 rounded-3xl border border-slate-200/80 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-900">
