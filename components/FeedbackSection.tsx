@@ -1,8 +1,9 @@
 'use client';
 
 import { MessageSquare } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useLanguage } from '../lib/LanguageContext';
+import { queueRequest, syncQueuedRequests } from '../lib/offlineQueue';
 
 const formResponseUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfjXDGSZhop-T5W3zIGx_SCXBRI7xR1dulWeuqtMyOa8jaMrQ/formResponse';
 
@@ -12,7 +13,27 @@ export default function FeedbackSection() {
   const [feedback, setFeedback] = useState('');
   const [email, setEmail] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'success' | 'error' | 'offline'>('idle');
+  const [isOnline, setIsOnline] = useState(true);
+
+  useEffect(() => {
+    setIsOnline(window.navigator.onLine);
+
+    const handleStatus = () => {
+      setIsOnline(window.navigator.onLine);
+      if (window.navigator.onLine) {
+        void syncQueuedRequests();
+      }
+    };
+
+    window.addEventListener('online', handleStatus);
+    window.addEventListener('offline', handleStatus);
+
+    return () => {
+      window.removeEventListener('online', handleStatus);
+      window.removeEventListener('offline', handleStatus);
+    };
+  }, []);
 
   const submitFeedback = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -23,19 +44,43 @@ export default function FeedbackSection() {
 
     setIsSending(true);
     setStatus('idle');
+    const payload = {
+      rating,
+      feedback: feedback.trim(),
+      email: email.trim(),
+      createdAt: Date.now(),
+    };
+
     const formData = new URLSearchParams();
     formData.set('entry.986012193', String(rating));
-    formData.set('entry.1332637419', feedback.trim());
-    if (email.trim()) formData.set('entry.866272866', email.trim());
+    formData.set('entry.1332637419', payload.feedback);
+    if (payload.email) formData.set('entry.866272866', payload.email);
 
     try {
+      if (!window.navigator.onLine) {
+        await queueRequest('feedback', payload as Record<string, unknown>);
+        setStatus('offline');
+        setRating(0);
+        setFeedback('');
+        setEmail('');
+        return;
+      }
+
       await fetch(formResponseUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formData.toString() });
       setStatus('success');
       setRating(0);
       setFeedback('');
       setEmail('');
     } catch {
-      setStatus('error');
+      try {
+        await queueRequest('feedback', payload as Record<string, unknown>);
+        setStatus('offline');
+        setRating(0);
+        setFeedback('');
+        setEmail('');
+      } catch {
+        setStatus('error');
+      }
     } finally {
       setIsSending(false);
     }
@@ -80,7 +125,9 @@ export default function FeedbackSection() {
             </label>
 
             {status === 'success' ? <p role="status" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-300">{t('feedbackSuccess')}</p> : null}
+            {status === 'offline' ? <p role="status" className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-300">{t('feedbackOffline')}</p> : null}
             {status === 'error' ? <p role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-900/70 dark:bg-rose-950/40 dark:text-rose-300">{t('feedbackError')}</p> : null}
+            {!isOnline ? <p className="rounded-2xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-700 dark:border-sky-900/70 dark:bg-sky-950/40 dark:text-sky-300">{t('feedbackOfflineStatus')}</p> : null}
             <button type="submit" disabled={isSending} className="inline-flex w-full items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-wait disabled:opacity-60 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">{isSending ? t('feedbackSending') : t('feedbackSubmit')}</button>
           </div>
         </form>

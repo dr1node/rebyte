@@ -35,6 +35,17 @@ export default function AboutPage() {
                 <p className="mt-4 text-base leading-7 text-slate-700 dark:text-slate-200"><LocalizedText en="Keep tools free, fast, and easy to use without forcing signup, tracking, or backend complexity." id="Menjaga alat tetap gratis, cepat, dan mudah digunakan tanpa pendaftaran, pelacakan, atau kompleksitas backend." /></p>
               </div>
             </div>
+
+            <div className="rounded-[2rem] border border-slate-200/70 bg-slate-50 p-6 shadow-sm dark:border-slate-800/70 dark:bg-slate-900/95">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-600 dark:text-sky-400"><LocalizedText en="Offline-first PWA" id="PWA offline-first" /></p>
+              <p className="mt-4 text-base leading-7 text-slate-700 dark:text-slate-200">
+                <LocalizedText
+                  en="ReByte now works as a Progressive Web App with offline-first support. The app loads its key pages and tool assets in advance, so the tools remain fully usable without an internet connection. Feedback and analytics requests are queued locally and automatically synced when the connection returns."
+                  id="ReByte kini berfungsi sebagai Progressive Web App dengan dukungan offline-first. Aplikasi memuat halaman utama dan aset alat lebih dulu, sehingga alat tetap dapat digunakan sepenuhnya tanpa koneksi internet. Permintaan feedback dan analytics disimpan dalam antrean lokal lalu otomatis tersinkronisasi saat koneksi kembali."
+                />
+              </p>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-3">
               {[
                 { label: <LocalizedText en="Tools available" id="Alat tersedia" />, value: '40+' },

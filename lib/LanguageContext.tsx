@@ -62,6 +62,13 @@ const translations = {
     feedbackSending: 'Sending...',
     feedbackSuccess: 'Thank you. Your feedback has been sent.',
     feedbackError: 'Please choose a rating and enter your feedback before sending.',
+    feedbackOffline: 'Saved offline. It will be sent automatically when you are back online.',
+    feedbackOfflineStatus: 'You are offline. Your feedback is queued and will sync once your connection is restored.',
+    installApp: 'Install app',
+    installAppInstalled: 'Installed',
+    installAppIosTitle: 'Install on iPhone/iPad',
+    installAppIosText: 'To add ReByte to your home screen, tap Share and choose Add to Home Screen.',
+    installAppClose: 'Close install instructions',
   },
   id: {
     home: 'Beranda',
@@ -118,6 +125,13 @@ const translations = {
     feedbackSending: 'Mengirim...',
     feedbackSuccess: 'Terima kasih. Masukan Anda telah terkirim.',
     feedbackError: 'Pilih rating dan isi masukan Anda sebelum mengirim.',
+    feedbackOffline: 'Tersimpan offline. Akan dikirim otomatis saat koneksi kembali.',
+    feedbackOfflineStatus: 'Anda sedang offline. Masukan Anda disimpan di antrean dan akan dikirim saat koneksi pulih.',
+    installApp: 'Pasang aplikasi',
+    installAppInstalled: 'Terpasang',
+    installAppIosTitle: 'Pasang di iPhone/iPad',
+    installAppIosText: 'Untuk menambahkan ReByte ke layar beranda, ketuk ikon Share lalu pilih Add to Home Screen.',
+    installAppClose: 'Tutup instruksi pemasangan',
   },
 } as const;
 

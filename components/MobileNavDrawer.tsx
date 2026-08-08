@@ -7,6 +7,9 @@ import { useEffect, useState } from 'react';
 import { FileText, Home, Info, ShieldCheck, Wrench, X } from 'lucide-react';
 import logoImage from '../img/ReByte navbar logo.png';
 import { useLanguage } from '../lib/LanguageContext';
+import ThemeToggle from './ThemeToggle';
+import LanguageToggle from './LanguageToggle';
+import InstallAppButton from './InstallAppButton';
 
 const menuItems = [
   { key: 'home', href: '/', Icon: Home },
@@ -92,6 +95,14 @@ export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps)
           >
             <X className="h-5 w-5" />
           </button>
+        </div>
+
+        <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
+          <div className="flex items-center justify-between gap-2">
+            <InstallAppButton />
+            <ThemeToggle />
+            <LanguageToggle />
+          </div>
         </div>
 
         <div className="mt-8 space-y-3">

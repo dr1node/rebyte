@@ -5,11 +5,19 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { LanguageProvider } from '../lib/LanguageContext';
 import { Analytics } from '@vercel/analytics/next';
+import PwaRegister from '../components/PwaRegister';
 
 export const metadata: Metadata = {
   title: 'ReByte — Free Online Utility Tools',
   description: 'Fast, privacy-friendly online tools for developers, students, and everyone.',
   metadataBase: new URL('https://rebyte.example'),
+  manifest: '/manifest.json',
+  applicationName: 'ReByte',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'ReByte',
+  },
   icons: {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
@@ -32,6 +40,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
+        <meta name="theme-color" content="#0f172a" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <link rel="manifest" href="/manifest.json" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -64,6 +76,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className="min-h-screen bg-transparent text-slate-900 antialiased dark:text-slate-100">
         <LanguageProvider>
+          <PwaRegister />
           <Navbar />
           <main>{children}</main>
           <Footer />
