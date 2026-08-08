@@ -7,20 +7,31 @@ import { useLanguage } from '../lib/LanguageContext';
 export default function InstallAppButton() {
   const { language } = useLanguage();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
+    // Detect iOS
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+
+    if (isIosDevice && !isStandalone) {
+      setIsIOS(true);
+      setShowButton(true);
+    }
+
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setIsInstallable(true);
+      setShowButton(true);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
     // If already installed, hide it
     window.addEventListener('appinstalled', () => {
-      setIsInstallable(false);
+      setShowButton(false);
       setDeferredPrompt(null);
     });
 
@@ -30,18 +41,30 @@ export default function InstallAppButton() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-
-    if (outcome === 'accepted') {
-      setIsInstallable(false);
+    if (isIOS) {
+      alert(language === 'id' ? "Untuk menginstal di iPhone/iPad, tekan tombol Share (Bagikan) lalu pilih 'Add to Home Screen' (Tambahkan ke Layar Utama)." : "To install on iPhone/iPad, tap the Share button and select 'Add to Home Screen'.");
+      return;
     }
-    setDeferredPrompt(null);
+
+    if (!deferredPrompt) {
+      alert(language === 'id' ? 'Instalasi otomatis tidak didukung di browser ini. Silakan gunakan fitur Add to Home Screen dari menu browser.' : 'Automatic installation is not supported in this browser. Please use the Add to Home Screen feature from the browser menu.');
+      return;
+    }
+
+    try {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+
+      if (outcome === 'accepted') {
+        setShowButton(false);
+      }
+      setDeferredPrompt(null);
+    } catch (err) {
+      console.error('PWA prompt error:', err);
+    }
   };
 
-  if (!isInstallable) return null;
+  if (!showButton) return null;
 
   return (
     <button

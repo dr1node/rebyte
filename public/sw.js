@@ -63,7 +63,7 @@ self.addEventListener('fetch', (event) => {
 
       return fetch(request)
         .then((networkResponse) => {
-          if (networkResponse && networkResponse.ok && (isAppShellAsset || request.destination === 'image' || request.url.includes('/_next/'))) {
+          if (networkResponse && networkResponse.ok && (isAppShellAsset || request.destination === 'image' || request.url.includes('/_next/') || request.mode === 'navigate')) {
             const responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
           }
