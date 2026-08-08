@@ -57,6 +57,9 @@ export const metadata: Metadata = {
     shortcut: '/favicon.png',
     apple: '/favicon.png',
   },
+  verification: {
+    google: 'google4eabac142a8d3d89',
+  },
   openGraph: {
     siteName: 'ReByte',
     title: 'ReByte — Free Online Utility Tools',
