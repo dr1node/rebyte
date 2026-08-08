@@ -3,13 +3,15 @@ import { tools, categories } from '../../lib/tools';
 import ToolCard from '../../components/ToolCard';
 import LocalizedText from '../../components/LocalizedText';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Tools · ReByte',
   description: 'Browse all available utility tools organized by category.',
 };
 
-export default function ToolsPage({ searchParams }: { searchParams: { category?: string } }) {
-  const category = searchParams.category;
+export default function ToolsPage({ searchParams }: { searchParams?: { category?: string } }) {
+  const category = typeof searchParams?.category === 'string' ? searchParams.category : undefined;
   const filteredTools = category
     ? tools.filter((tool) => tool.category.toLowerCase() === category.toLowerCase())
     : tools;

@@ -26,12 +26,7 @@ const APP_SHELL = [
   '/icons/jwt.svg',
   '/icons/qr.svg',
   '/icons/barcode.svg',
-  '/icons/markdown.svg',
-  '/icons/uuid.svg',
-  '/icons/word.svg',
-  '/icons/rotate.svg',
-  '/icons/image.svg',
-  '/icons/json.svg'
+  '/icons/markdown.svg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -58,6 +53,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const isAppShellAsset = APP_SHELL.includes(url.pathname) || url.pathname.startsWith('/icons/') || url.pathname.startsWith('/_next/static/') || url.pathname.endsWith('.svg');
+
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -66,13 +63,19 @@ self.addEventListener('fetch', (event) => {
 
       return fetch(request)
         .then((networkResponse) => {
-          if (request.url.includes('/_next/') || request.destination === 'image' || request.url.endsWith('.svg')) {
+          if (networkResponse && networkResponse.ok && (isAppShellAsset || request.destination === 'image' || request.url.includes('/_next/'))) {
             const responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
           }
           return networkResponse;
         })
-        .catch(() => caches.match('/'));
+        .catch(() => {
+          if (request.mode === 'navigate') {
+            return caches.match('/');
+          }
+
+          return caches.match(request) || Response.error();
+        });
     })
   );
 });

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FileText, Home, Info, ShieldCheck, Wrench, X } from 'lucide-react';
 import logoImage from '../img/ReByte navbar logo.png';
+import logoImageLight from '../img/ReByte navbar logo light mode.png';
 import { useLanguage } from '../lib/LanguageContext';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
@@ -28,6 +29,20 @@ export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps)
   const pathname = usePathname();
   const { t } = useLanguage();
   const [mounted, setMounted] = useState(open);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const syncThemeState = () => {
+      const root = document.documentElement;
+      setIsDarkMode(root.classList.contains('dark'));
+    };
+
+    syncThemeState();
+    const observer = new MutationObserver(syncThemeState);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -78,7 +93,7 @@ export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps)
           <div className="flex items-center gap-3">
             <div className="relative flex h-9 items-center justify-center sm:h-10">
               <Image
-                src={logoImage}
+                src={isDarkMode ? logoImage : logoImageLight}
                 alt="ReByte logo"
                 width={320}
                 height={100}

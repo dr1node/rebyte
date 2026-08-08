@@ -15,22 +15,35 @@ export default function InstallAppButton() {
   const [showIOSInstructions, setShowIOSInstructions] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [supportsInstall, setSupportsInstall] = useState(false);
 
   useEffect(() => {
     const iosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const standalone = window.matchMedia('(display-mode: standalone)').matches || Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
+    const secureContext = window.isSecureContext || window.location.hostname === 'localhost';
+    const installCapableBrowser = /Chrome|Chromium|CriOS|Edg|OPR|SamsungBrowser/.test(navigator.userAgent) || /Android/.test(navigator.userAgent);
 
     setIsIOS(iosDevice);
     setIsStandalone(standalone);
+    setSupportsInstall(secureContext && (installCapableBrowser || iosDevice));
 
     const onBeforeInstallPrompt = (event: Event) => {
+      const installEvent = event as BeforeInstallPromptEvent;
+
+      if (typeof installEvent?.prompt !== 'function') {
+        return;
+      }
+
       event.preventDefault();
-      setInstallPrompt(event as BeforeInstallPromptEvent);
+      setInstallPrompt(installEvent);
+      setSupportsInstall(true);
+      setShowIOSInstructions(false);
     };
 
     const onAppInstalled = () => {
       setInstallPrompt(null);
       setIsStandalone(true);
+      setSupportsInstall(false);
     };
 
     window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
@@ -43,10 +56,18 @@ export default function InstallAppButton() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (installPrompt) {
-      await installPrompt.prompt();
-      const choice = await installPrompt.userChoice;
-      if (choice.outcome === 'accepted') {
+    if (installPrompt && typeof installPrompt.prompt === 'function') {
+      try {
+        await installPrompt.prompt();
+        const choice = await installPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          setInstallPrompt(null);
+          setIsStandalone(true);
+          setSupportsInstall(false);
+        } else {
+          setInstallPrompt(null);
+        }
+      } catch {
         setInstallPrompt(null);
       }
       return;
@@ -59,6 +80,14 @@ export default function InstallAppButton() {
   };
 
   const buttonLabel = isStandalone ? t('installAppInstalled') : t('installApp');
+
+  if (isStandalone) {
+    return null;
+  }
+
+  if (!supportsInstall && !isIOS && !installPrompt) {
+    return null;
+  }
 
   return (
     <>

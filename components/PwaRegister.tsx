@@ -31,9 +31,17 @@ export default function PwaRegister() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
+    const isSecureContext = window.isSecureContext || window.location.hostname === 'localhost';
+
+    if ('serviceWorker' in navigator && isSecureContext) {
       navigator.serviceWorker
-        .register('/sw.js')
+        .register('/sw.js', { scope: '/' })
+        .then(() => {
+          if ('serviceWorker' in navigator) {
+            return navigator.serviceWorker.ready;
+          }
+          return undefined;
+        })
         .catch((error) => console.warn('PWA service worker registration failed:', error));
     }
   }, []);

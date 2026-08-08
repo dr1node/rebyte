@@ -14,6 +14,7 @@ import { getLocalizedTool } from '../lib/toolTranslations';
 import { tools } from '../lib/tools';
 import { setBodyScrollLocked } from '../lib/bodyScrollLock';
 import logoImage from '../img/ReByte navbar logo.png';
+import logoImageLight from '../img/ReByte navbar logo light mode.png';
 
 const navigation = [
   { key: 'home', href: '/' },
@@ -29,7 +30,22 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const syncThemeState = () => {
+      const root = document.documentElement;
+      const matchesDark = root.classList.contains('dark');
+      setIsDarkMode(matchesDark);
+    };
+
+    syncThemeState();
+    const observer = new MutationObserver(syncThemeState);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -120,7 +136,7 @@ export default function Navbar() {
           <Link href="/" className="flex min-w-0 items-center text-slate-900 dark:text-white" aria-label="ReByte home">
             <div className="relative flex h-9 items-center justify-center sm:h-10 md:h-11">
               <Image
-                src={logoImage}
+                src={isDarkMode ? logoImage : logoImageLight}
                 alt="ReByte logo"
                 width={320}
                 height={100}

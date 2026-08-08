@@ -154,11 +154,19 @@ function getInitialLanguage(): Language {
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(getInitialLanguage);
+  const [language, setLanguageState] = useState<Language>('en');
+
+  useEffect(() => {
+    const initialLanguage = getInitialLanguage();
+    setLanguageState(initialLanguage);
+    document.documentElement.dataset.language = initialLanguage;
+    document.documentElement.lang = initialLanguage === 'id' ? 'id' : 'en';
+  }, []);
 
   const setLanguage = (nextLanguage: Language) => {
     setLanguageState(nextLanguage);
     document.documentElement.dataset.language = nextLanguage;
+    document.documentElement.lang = nextLanguage === 'id' ? 'id' : 'en';
 
     try {
       localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
