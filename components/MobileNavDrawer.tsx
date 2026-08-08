@@ -10,7 +10,6 @@ import logoImageLight from '../img/ReByte navbar logo light mode.png';
 import { useLanguage } from '../lib/LanguageContext';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
-import InstallAppButton from './InstallAppButton';
 
 const menuItems = [
   { key: 'home', href: '/', Icon: Home },
@@ -113,8 +112,7 @@ export default function MobileNavDrawer({ open, onClose }: MobileNavDrawerProps)
         </div>
 
         <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex items-center justify-between gap-2">
-            <InstallAppButton />
+          <div className="flex items-center justify-end gap-2">
             <ThemeToggle />
             <LanguageToggle />
           </div>

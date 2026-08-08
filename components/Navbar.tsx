@@ -8,7 +8,6 @@ import { Menu, Search, X } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
-import InstallAppButton from './InstallAppButton';
 import { useLanguage } from '../lib/LanguageContext';
 import { getLocalizedTool } from '../lib/toolTranslations';
 import { tools } from '../lib/tools';
@@ -153,7 +152,6 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2">
             <div className="hidden md:flex md:items-center md:gap-2">
-              <InstallAppButton />
               <ThemeToggle />
               <LanguageToggle />
             </div>
