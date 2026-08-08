@@ -8,31 +8,80 @@ import { Analytics } from '@vercel/analytics/next';
 import PwaRegister from '../components/PwaRegister';
 
 export const metadata: Metadata = {
-  title: 'ReByte — Free Online Utility Tools',
-  description: 'Fast, privacy-friendly online tools for developers, students, and everyone.',
-  metadataBase: new URL('https://rebyte.example'),
-  manifest: '/manifest.json',
+  metadataBase: new URL('https://rebyte.my.id'),
+  title: {
+    default: 'ReByte — Free Online Utility Tools',
+    template: '%s | ReByte',
+  },
+  description:
+    'ReByte offers fast, browser-based utility tools for PDF, image, text, developer, and productivity workflows without sign-up or data storage.',
   applicationName: 'ReByte',
+  authors: [{ name: 'ReByte' }],
+  creator: 'ReByte',
+  publisher: 'ReByte',
+  keywords: [
+    'online tools',
+    'free utility tools',
+    'pdf tools',
+    'image tools',
+    'developer tools',
+    'text tools',
+    'browser utilities',
+    'ReByte',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  manifest: '/manifest.json',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'ReByte',
   },
   icons: {
-    icon: '/favicon.png',
+    icon: [
+      { url: '/favicon.png', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon.png', sizes: '192x192', type: 'image/png' },
+    ],
     shortcut: '/favicon.png',
     apple: '/favicon.png',
   },
   openGraph: {
+    siteName: 'ReByte',
     title: 'ReByte — Free Online Utility Tools',
-    description: 'Fast, privacy-friendly online tools for developers, students, and everyone.',
+    description:
+      'Fast, private, and browser-first utilities for editing files, text, PDFs, and developer tasks.',
     type: 'website',
-    url: 'https://rebyte.example',
+    locale: 'en_US',
+    url: 'https://rebyte.my.id',
+    images: [
+      {
+        url: '/favicon.png',
+        width: 192,
+        height: 192,
+        alt: 'ReByte free online utility tools',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@rebyte',
+    creator: '@rebyte',
     title: 'ReByte — Free Online Utility Tools',
-    description: 'Fast, privacy-friendly online tools for developers, students, and everyone.',
+    description:
+      'Fast, private, and browser-first utilities for editing files, text, PDFs, and developer tasks.',
+    images: ['/favicon.png'],
   },
 };
 
@@ -44,6 +93,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="manifest" href="/manifest.json" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'ReByte',
+              url: 'https://rebyte.my.id',
+              description: 'Free Online Utility Tools'
+            }),
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
