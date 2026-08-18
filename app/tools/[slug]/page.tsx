@@ -15,6 +15,9 @@ export function generateMetadata({ params }: Props): Metadata {
   return {
     title: `${tool.name} · ReByte`,
     description: tool.description,
+    alternates: {
+      canonical: `/tools/${tool.slug}`,
+    },
     openGraph: { title: `${tool.name} · ReByte`, description: tool.description, type: 'website' },
   };
 }

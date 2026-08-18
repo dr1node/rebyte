@@ -29,9 +29,7 @@ export const metadata: Metadata = {
     'browser utilities',
     'ReByte',
   ],
-  alternates: {
-    canonical: '/',
-  },
+
   manifest: '/manifest.json',
   robots: {
     index: true,
