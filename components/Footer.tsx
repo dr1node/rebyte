@@ -11,7 +11,7 @@ const footerLinks = [
   { label: 'Privacy', href: '/privacy' },
 ];
 
-const portfolioUrl = 'https://itsrex.xo.je/';
+const portfolioUrl = 'https://rex.is-a.dev/';
 
 export default function Footer() {
   const { t } = useLanguage();

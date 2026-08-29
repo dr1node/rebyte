@@ -212,7 +212,7 @@ export default function AboutPage() {
           </p>
           <div className="mt-6">
             <a
-              href="https://itsrex.xo.je/"
+              href="https://rex.is-a.dev/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-3xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
