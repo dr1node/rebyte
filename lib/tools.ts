@@ -88,6 +88,30 @@ export const tools: Tool[] = [
     related: ['image-cropper', 'image-resizer'],
   },
   {
+    slug: 'exif-metadata-viewer',
+    name: 'EXIF Metadata Viewer',
+    description: 'View image metadata such as camera model, dimensions, date, orientation, and other available EXIF information.',
+    category: 'Image',
+    icon: '/icons/exif-viewer.svg',
+    related: ['exif-metadata-remover', 'image-converter'],
+  },
+  {
+    slug: 'exif-metadata-remover',
+    name: 'EXIF Metadata Remover',
+    description: 'Remove EXIF metadata from images before sharing them to help protect your privacy.',
+    category: 'Image',
+    icon: '/icons/exif-remover.svg',
+    related: ['exif-metadata-viewer', 'image-converter'],
+  },
+  {
+    slug: 'svg-optimizer',
+    name: 'SVG Optimizer',
+    description: 'Optimize SVG files by removing unnecessary data and reducing file size while preserving the visual result.',
+    category: 'Image',
+    icon: '/icons/svg-optimizer.svg',
+    related: ['image-converter', 'exif-metadata-viewer'],
+  },
+  {
     slug: 'text-case-converter',
     name: 'Text Case Converter',
     description: 'Switch text between uppercase, lowercase, title case, and more.',
@@ -110,6 +134,30 @@ export const tools: Tool[] = [
     category: 'Text',
     icon: '/icons/lorem.svg',
     related: ['word-counter', 'text-case-converter'],
+  },
+  {
+    slug: 'text-cleaner',
+    name: 'Text Cleaner',
+    description: 'Clean text by removing extra spaces, empty lines, unwanted characters, and common formatting issues.',
+    category: 'Text',
+    icon: '/icons/text-cleaner.svg',
+    related: ['duplicate-line-remover', 'text-case-converter'],
+  },
+  {
+    slug: 'duplicate-line-remover',
+    name: 'Duplicate Line Remover',
+    description: 'Automatically remove duplicate lines from lists, text, or other line-based data.',
+    category: 'Text',
+    icon: '/icons/duplicate-line.svg',
+    related: ['text-cleaner', 'text-sorter'],
+  },
+  {
+    slug: 'text-sorter',
+    name: 'Text Sorter',
+    description: 'Sort lines of text alphabetically, numerically, by length, or in reverse order.',
+    category: 'Text',
+    icon: '/icons/text-sorter.svg',
+    related: ['duplicate-line-remover', 'text-cleaner'],
   },
   {
     slug: 'ping-test',
@@ -217,6 +265,30 @@ export const tools: Tool[] = [
     related: ['image-converter', 'image-resizer'],
   },
   {
+    slug: 'pdf-page-organizer',
+    name: 'PDF Page Organizer',
+    description: 'Organize PDF pages by moving, deleting, rotating, duplicating, or reordering them directly in your browser.',
+    category: 'PDF',
+    icon: '/icons/pdf-organizer.svg',
+    related: ['pdf-splitter', 'pdf-merge'],
+  },
+  {
+    slug: 'pdf-metadata-remover',
+    name: 'PDF Metadata Remover',
+    description: 'Remove PDF metadata such as author, title, creator, and other document information locally.',
+    category: 'PDF',
+    icon: '/icons/pdf-metadata.svg',
+    related: ['pdf-compressor', 'pdf-page-organizer'],
+  },
+  {
+    slug: 'pdf-watermark',
+    name: 'PDF Watermark',
+    description: 'Add text watermarks to PDF pages with customizable position, size, rotation, and opacity.',
+    category: 'PDF',
+    icon: '/icons/pdf-watermark.svg',
+    related: ['pdf-page-organizer', 'pdf-merge'],
+  },
+  {
     slug: 'qr-code-generator',
     name: 'QR Code Generator',
     description: 'Generate customizable QR Codes instantly.',
@@ -258,6 +330,8 @@ export const tools: Tool[] = [
     related: ['json-formatter'],
   },
 ];
+
+export type ToolSlug = (typeof tools)[number]['slug'];
 
 export const categories = [
   { key: 'PDF', label: 'PDF' },
