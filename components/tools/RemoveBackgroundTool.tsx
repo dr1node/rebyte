@@ -10,6 +10,7 @@ const MAX_IMAGE_PIXELS = 1_500_000;
 
 type Mask = { data: ArrayLike<number>; width: number; height: number };
 type Segmentation = { mask: Mask };
+type NavigatorWithWebGpu = Navigator & { gpu?: { requestAdapter: () => Promise<unknown> } };
 // eslint-disable-next-line no-unused-vars
 type Segmenter = (...args: [HTMLCanvasElement]) => Promise<Segmentation[]>;
 type ToolCopy = {
@@ -68,6 +69,34 @@ const copyByLanguage: Record<'en' | 'id', ToolCopy> = {
 };
 
 let segmenterPromise: Promise<Segmenter> | null = null;
+let segmenterDevice: 'webgpu' | 'wasm' | null = null;
+
+const canUseWebGpu = async () => {
+  if (typeof navigator === 'undefined' || !('gpu' in navigator)) return false;
+  try {
+    const adapter = await (navigator as NavigatorWithWebGpu).gpu?.requestAdapter();
+    return Boolean(adapter);
+  } catch {
+    return false;
+  }
+};
+
+// eslint-disable-next-line no-unused-vars
+const createSegmenter = async (
+  device: 'webgpu' | 'wasm',
+  // eslint-disable-next-line no-unused-vars
+  onProgress: (message: string) => void,
+  // eslint-disable-next-line no-unused-vars
+  pipeline: (task: string, model: string, options: Record<string, unknown>) => Promise<Segmenter>
+) => pipeline('image-segmentation', MODEL_ID, {
+  device,
+  progress_callback: (progress: { status?: string; progress?: number }) => {
+    if (progress.status === 'progress' && typeof progress.progress === 'number') {
+      const prefix = device === 'webgpu' ? 'Loading AI model...' : 'Loading AI model with WASM...';
+      onProgress(`${prefix} ${Math.round(progress.progress)}%`);
+    }
+  },
+});
 
 // eslint-disable-next-line no-unused-vars
 const getSegmenter = async (onProgress: (message: string) => void) => {
@@ -76,29 +105,45 @@ const getSegmenter = async (onProgress: (message: string) => void) => {
   const createPipeline = pipeline as unknown as (...args: [string, string, Record<string, unknown>]) => Promise<Segmenter>;
   env.useBrowserCache = true;
   env.allowLocalModels = false;
-  const device = typeof navigator !== 'undefined' && 'gpu' in navigator ? 'webgpu' : 'wasm';
+  const device = (await canUseWebGpu()) ? 'webgpu' : 'wasm';
   onProgress(device === 'webgpu' ? 'Loading AI model with WebGPU...' : 'Loading AI model with WASM...');
 
-  if (!segmenterPromise) {
-    segmenterPromise = createPipeline('image-segmentation', MODEL_ID, {
-      device,
-      progress_callback: (progress: { status?: string; progress?: number }) => {
-        if (progress.status === 'progress' && typeof progress.progress === 'number') onProgress(`Loading AI model... ${Math.round(progress.progress)}%`);
-      },
-    }) as Promise<Segmenter>;
+  if (!segmenterPromise || segmenterDevice !== device) {
+    segmenterDevice = device;
+    segmenterPromise = createSegmenter(device, onProgress, createPipeline);
   }
 
   try {
     return await segmenterPromise;
   } catch (error) {
+    segmenterPromise = null;
+    segmenterDevice = null;
     if (device !== 'webgpu') throw error;
-    segmenterPromise = createPipeline('image-segmentation', MODEL_ID, {
-      device: 'wasm',
-      progress_callback: (progress: { status?: string; progress?: number }) => {
-        if (progress.status === 'progress' && typeof progress.progress === 'number') onProgress(`Loading AI model with WASM... ${Math.round(progress.progress)}%`);
-      },
-    }) as Promise<Segmenter>;
+
+    onProgress('Loading AI model with WASM...');
+    segmenterDevice = 'wasm';
+    segmenterPromise = createSegmenter('wasm', onProgress, createPipeline);
     return segmenterPromise;
+  }
+};
+
+// eslint-disable-next-line no-unused-vars
+const getWasmSegmenter = async (onProgress: (message: string) => void) => {
+  const { env, pipeline } = await import('@huggingface/transformers');
+  // eslint-disable-next-line no-unused-vars
+  const createPipeline = pipeline as unknown as (...args: [string, string, Record<string, unknown>]) => Promise<Segmenter>;
+  env.useBrowserCache = true;
+  env.allowLocalModels = false;
+  if (!segmenterPromise || segmenterDevice !== 'wasm') {
+    segmenterDevice = 'wasm';
+    segmenterPromise = createSegmenter('wasm', onProgress, createPipeline);
+  }
+  try {
+    return await segmenterPromise;
+  } catch (error) {
+    segmenterPromise = null;
+    segmenterDevice = null;
+    throw error;
   }
 };
 
@@ -219,7 +264,17 @@ export default function RemoveBackgroundTool() {
       });
       if (processId.current !== currentProcess) return;
       setStatus(copy.removing);
-      const output = await segmenter(canvas);
+      let output: Segmentation[];
+      try {
+        output = await segmenter(canvas);
+      } catch (inferenceError) {
+        if (segmenterDevice !== 'webgpu') throw inferenceError;
+        setStatus(copy.loadingWasm);
+        const wasmSegmenter = await getWasmSegmenter(setStatus);
+        if (processId.current !== currentProcess) return;
+        setStatus(copy.removing);
+        output = await wasmSegmenter(canvas);
+      }
       const mask = output[0]?.mask;
       if (!mask) throw new Error('The AI model did not return a mask');
 
