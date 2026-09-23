@@ -4,15 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import FileDropzone from '../FileDropzone';
 import { useLanguage } from '../../lib/LanguageContext';
 
-const MODEL_ID = 'briaai/RMBG-1.4';
 const MAX_IMAGE_EDGE = 1280;
 const MAX_IMAGE_PIXELS = 1_500_000;
 
 type Mask = { data: ArrayLike<number>; width: number; height: number };
-type Segmentation = { mask: Mask };
-type NavigatorWithWebGpu = Navigator & { gpu?: { requestAdapter: () => Promise<unknown> } };
-// eslint-disable-next-line no-unused-vars
-type Segmenter = (...args: [HTMLCanvasElement]) => Promise<Segmentation[]>;
 type ToolCopy = {
   intro: string;
   upload: string;
@@ -21,6 +16,9 @@ type ToolCopy = {
   loadingWebGpu: string;
   loadingWasm: string;
   loadingModel: string;
+  firstLoadTitle: string;
+  firstLoadDescription: string;
+  firstLoadWarning: string;
   removing: string;
   done: string;
   error: string;
@@ -40,6 +38,9 @@ const copyByLanguage: Record<'en' | 'id', ToolCopy> = {
     loadingWebGpu: 'Loading AI model with WebGPU...',
     loadingWasm: 'Loading AI model with WASM...',
     loadingModel: 'Loading AI model...',
+    firstLoadTitle: 'First-time setup may take a little longer',
+    firstLoadDescription: 'The AI model is being downloaded and prepared in your browser. It will be cached for future use.',
+    firstLoadWarning: 'Please keep this tab open until the process is complete.',
     removing: 'Removing background...',
     done: 'Background removed.',
     error: 'Could not remove the background. Try a smaller JPG, PNG, or WebP image.',
@@ -57,6 +58,9 @@ const copyByLanguage: Record<'en' | 'id', ToolCopy> = {
     loadingWebGpu: 'Memuat model AI dengan WebGPU...',
     loadingWasm: 'Memuat model AI dengan WASM...',
     loadingModel: 'Memuat model AI...',
+    firstLoadTitle: 'Proses pertama mungkin memakan waktu lebih lama',
+    firstLoadDescription: 'Model AI sedang diunduh dan disiapkan di browser Anda. Model akan disimpan di cache untuk penggunaan berikutnya.',
+    firstLoadWarning: 'Jangan tutup tab ini sebelum proses selesai.',
     removing: 'Menghapus background...',
     done: 'Background berhasil dihapus.',
     error: 'Background tidak dapat dihapus. Coba gambar JPG, PNG, atau WebP yang lebih kecil.',
@@ -66,85 +70,6 @@ const copyByLanguage: Record<'en' | 'id', ToolCopy> = {
     resultHint: 'PNG transparan akan muncul di sini.',
     download: 'Unduh PNG transparan',
   },
-};
-
-let segmenterPromise: Promise<Segmenter> | null = null;
-let segmenterDevice: 'webgpu' | 'wasm' | null = null;
-
-const canUseWebGpu = async () => {
-  if (typeof navigator === 'undefined' || !('gpu' in navigator)) return false;
-  try {
-    const adapter = await (navigator as NavigatorWithWebGpu).gpu?.requestAdapter();
-    return Boolean(adapter);
-  } catch {
-    return false;
-  }
-};
-
-// eslint-disable-next-line no-unused-vars
-const createSegmenter = async (
-  device: 'webgpu' | 'wasm',
-  // eslint-disable-next-line no-unused-vars
-  onProgress: (message: string) => void,
-  // eslint-disable-next-line no-unused-vars
-  pipeline: (task: string, model: string, options: Record<string, unknown>) => Promise<Segmenter>
-) => pipeline('image-segmentation', MODEL_ID, {
-  device,
-  progress_callback: (progress: { status?: string; progress?: number }) => {
-    if (progress.status === 'progress' && typeof progress.progress === 'number') {
-      const prefix = device === 'webgpu' ? 'Loading AI model...' : 'Loading AI model with WASM...';
-      onProgress(`${prefix} ${Math.round(progress.progress)}%`);
-    }
-  },
-});
-
-// eslint-disable-next-line no-unused-vars
-const getSegmenter = async (onProgress: (message: string) => void) => {
-  const { env, pipeline } = await import('@huggingface/transformers');
-  // eslint-disable-next-line no-unused-vars
-  const createPipeline = pipeline as unknown as (...args: [string, string, Record<string, unknown>]) => Promise<Segmenter>;
-  env.useBrowserCache = true;
-  env.allowLocalModels = false;
-  const device = (await canUseWebGpu()) ? 'webgpu' : 'wasm';
-  onProgress(device === 'webgpu' ? 'Loading AI model with WebGPU...' : 'Loading AI model with WASM...');
-
-  if (!segmenterPromise || segmenterDevice !== device) {
-    segmenterDevice = device;
-    segmenterPromise = createSegmenter(device, onProgress, createPipeline);
-  }
-
-  try {
-    return await segmenterPromise;
-  } catch (error) {
-    segmenterPromise = null;
-    segmenterDevice = null;
-    if (device !== 'webgpu') throw error;
-
-    onProgress('Loading AI model with WASM...');
-    segmenterDevice = 'wasm';
-    segmenterPromise = createSegmenter('wasm', onProgress, createPipeline);
-    return segmenterPromise;
-  }
-};
-
-// eslint-disable-next-line no-unused-vars
-const getWasmSegmenter = async (onProgress: (message: string) => void) => {
-  const { env, pipeline } = await import('@huggingface/transformers');
-  // eslint-disable-next-line no-unused-vars
-  const createPipeline = pipeline as unknown as (...args: [string, string, Record<string, unknown>]) => Promise<Segmenter>;
-  env.useBrowserCache = true;
-  env.allowLocalModels = false;
-  if (!segmenterPromise || segmenterDevice !== 'wasm') {
-    segmenterDevice = 'wasm';
-    segmenterPromise = createSegmenter('wasm', onProgress, createPipeline);
-  }
-  try {
-    return await segmenterPromise;
-  } catch (error) {
-    segmenterPromise = null;
-    segmenterDevice = null;
-    throw error;
-  }
 };
 
 const loadImage = (file: File) => new Promise<HTMLImageElement>((resolve, reject) => {
@@ -211,6 +136,31 @@ const applyMaskAndExport = async (canvas: HTMLCanvasElement, mask: Mask) => {
   });
 };
 
+// eslint-disable-next-line no-unused-vars
+const processInWorker = (worker: Worker, image: Blob, onStatus: (message: string) => void) => new Promise<Mask>((resolve, reject) => {
+  const handleMessage = (event: MessageEvent<{ type: string; message?: string; result?: { data: ArrayBuffer; width: number; height: number } }>) => {
+    if (event.data.type === 'status' && event.data.message) {
+      onStatus(event.data.message);
+      return;
+    }
+    worker.removeEventListener('message', handleMessage);
+    worker.removeEventListener('error', handleError);
+    if (event.data.type === 'result' && event.data.result) {
+      resolve({ data: new Float32Array(event.data.result.data), width: event.data.result.width, height: event.data.result.height });
+    } else {
+      reject(new Error('Background removal worker failed'));
+    }
+  };
+  const handleError = () => {
+    worker.removeEventListener('message', handleMessage);
+    worker.removeEventListener('error', handleError);
+    reject(new Error('Background removal worker failed'));
+  };
+  worker.addEventListener('message', handleMessage);
+  worker.addEventListener('error', handleError);
+  worker.postMessage({ type: 'process', image });
+});
+
 export default function RemoveBackgroundTool() {
   const { language } = useLanguage();
   const copy = copyByLanguage[language === 'id' ? 'id' : 'en'];
@@ -220,7 +170,18 @@ export default function RemoveBackgroundTool() {
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [loadingModel, setLoadingModel] = useState(false);
   const processId = useRef(0);
+  const workerRef = useRef<Worker | null>(null);
+
+  useEffect(() => {
+    const worker = new Worker(new URL('./removeBackground.worker.ts', import.meta.url), { type: 'module' });
+    workerRef.current = worker;
+    return () => {
+      worker.terminate();
+      workerRef.current = null;
+    };
+  }, []);
 
   useEffect(() => () => {
     if (originalUrl) URL.revokeObjectURL(originalUrl);
@@ -256,35 +217,37 @@ export default function RemoveBackgroundTool() {
       context.imageSmoothingQuality = 'high';
       context.drawImage(image, 0, 0, width, height);
 
-      const segmenter = await getSegmenter((message) => {
-        if (message.startsWith('Loading AI model with WebGPU')) setStatus(copy.loadingWebGpu);
-        else if (message.startsWith('Loading AI model with WASM')) setStatus(copy.loadingWasm);
-        else if (message.startsWith('Loading AI model')) setStatus(copy.loadingModel);
+      const worker = workerRef.current;
+      if (!worker) throw new Error('Background removal worker is unavailable');
+      const workingImage = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Could not prepare image'))), 'image/jpeg', 0.9);
+      });
+      const mask = await processInWorker(worker, workingImage, (message) => {
+        if (message.startsWith('Loading AI model with WebGPU')) {
+          setLoadingModel(true);
+          setStatus(copy.loadingWebGpu);
+        } else if (message.startsWith('Loading AI model with WASM')) {
+          setLoadingModel(true);
+          setStatus(copy.loadingWasm);
+        } else if (message.startsWith('Loading AI model')) {
+          setLoadingModel(true);
+          setStatus(copy.loadingModel);
+        } else if (message === 'Removing background...') {
+          setLoadingModel(false);
+          setStatus(copy.removing);
+        }
         else setStatus(message);
       });
       if (processId.current !== currentProcess) return;
-      setStatus(copy.removing);
-      let output: Segmentation[];
-      try {
-        output = await segmenter(canvas);
-      } catch (inferenceError) {
-        if (segmenterDevice !== 'webgpu') throw inferenceError;
-        setStatus(copy.loadingWasm);
-        const wasmSegmenter = await getWasmSegmenter(setStatus);
-        if (processId.current !== currentProcess) return;
-        setStatus(copy.removing);
-        output = await wasmSegmenter(canvas);
-      }
-      const mask = output[0]?.mask;
-      if (!mask) throw new Error('The AI model did not return a mask');
-
       const result = await applyMaskAndExport(canvas, mask);
       if (processId.current !== currentProcess) return;
       setResultUrl(URL.createObjectURL(result));
+      setLoadingModel(false);
       setStatus(copy.done);
     } catch (processingError) {
       if (processId.current !== currentProcess) return;
       setError(copy.error);
+      setLoadingModel(false);
       setStatus('');
     } finally {
       if (processId.current === currentProcess) setProcessing(false);
@@ -309,6 +272,13 @@ export default function RemoveBackgroundTool() {
       <div className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft dark:border-slate-800/70 dark:bg-slate-950">
         <FileDropzone label={copy.upload} hint={copy.hint} accept="image/jpeg,image/png,image/webp" onFiles={handleUpload} />
         {status ? <p className="mt-4 rounded-3xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-800 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-200" role="status">{status}</p> : null}
+        {loadingModel ? (
+          <div className="mt-4 rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100" role="note">
+            <p className="font-semibold">{copy.firstLoadTitle}</p>
+            <p className="mt-1 leading-6">{copy.firstLoadDescription}</p>
+            <p className="mt-2 font-medium">{copy.firstLoadWarning}</p>
+          </div>
+        ) : null}
         {error ? <p className="mt-4 rounded-3xl border border-rose-300/70 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-600/60 dark:bg-rose-900/30 dark:text-rose-200" role="alert">{error}</p> : null}
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <div>
