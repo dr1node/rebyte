@@ -22,6 +22,7 @@ const PasswordGeneratorTool = dynamic(() => import('./tools/PasswordGeneratorToo
 const ImageConverterTool = dynamic(() => import('./tools/ImageConverterTool'), { ssr: false });
 const ImageToPdfTool = dynamic(() => import('./tools/ImageToPdfTool'), { ssr: false });
 const ImageCompressorTool = dynamic(() => import('./tools/ImageCompressorTool'), { ssr: false });
+const RemoveBackgroundTool = dynamic(() => import('./tools/RemoveBackgroundTool'), { ssr: false });
 const ImageCropperTool = dynamic(() => import('./tools/ImageCropperTool'), { ssr: false });
 const ImageRotatorFlipperTool = dynamic(() => import('./tools/ImageRotatorFlipperTool'), { ssr: false });
 const ExifMetadataViewerTool = dynamic(() => import('./tools/ExifMetadataViewerTool'), { ssr: false });
@@ -63,6 +64,7 @@ export const toolComponents: Record<ToolSlug, ComponentType> = {
   'image-converter': ImageConverterTool,
   'image-to-pdf': ImageToPdfTool,
   'image-compressor': ImageCompressorTool,
+  'remove-background': RemoveBackgroundTool,
   'image-cropper': ImageCropperTool,
   'image-rotator-flipper': ImageRotatorFlipperTool,
   'exif-metadata-viewer': ExifMetadataViewerTool,

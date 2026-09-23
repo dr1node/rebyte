@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@huggingface/transformers": "^3.7.2",
     "@vercel/analytics": "^2.0.1",
     "jsbarcode": "^3.11.5",
     "jspdf": "^4.2.1",

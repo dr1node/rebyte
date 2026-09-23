@@ -9,6 +9,7 @@ const indonesianTools: Record<string, { name: string; description: string; categ
   'pdf-compressor': { name: 'Kompresor PDF', description: 'Kurangi ukuran file PDF tanpa mengubah tata letaknya.', category: 'PDF' },
   'image-resizer': { name: 'Pengubah Ukuran Gambar', description: 'Ubah ukuran gambar untuk web, media sosial, dan presentasi.', category: 'Gambar' },
   'image-compressor': { name: 'Kompresor Gambar', description: 'Kurangi ukuran file gambar dengan tetap menjaga kualitas.', category: 'Gambar' },
+  'remove-background': { name: 'Hapus Background', description: 'Hapus background gambar secara lokal dengan AI di browser dan ekspor sebagai PNG transparan.', category: 'Gambar' },
   'image-cropper': { name: 'Pemotong Gambar', description: 'Potong gambar ke ukuran apa pun langsung di browser.', category: 'Gambar' },
   'image-rotator-flipper': { name: 'Pemutar & Pembalik Gambar', description: 'Putar dan balik gambar langsung di browser tanpa mengunggah file ke server.', category: 'Gambar' },
   'exif-metadata-viewer': { name: 'Penampil Metadata EXIF', description: 'Lihat metadata gambar seperti model kamera, dimensi, tanggal, orientasi, dan informasi EXIF lainnya.', category: 'Gambar' },

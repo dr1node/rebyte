@@ -72,6 +72,14 @@ export const tools: Tool[] = [
     related: ['image-resizer', 'image-converter'],
   },
   {
+    slug: 'remove-background',
+    name: 'Remove Background',
+    description: 'Remove image backgrounds locally with browser-based AI and export a transparent PNG.',
+    category: 'Image',
+    icon: '/icons/remove-background.svg',
+    related: ['image-converter', 'image-compressor'],
+  },
+  {
     slug: 'image-cropper',
     name: 'Image Cropper',
     description: 'Crop images to any size directly in your browser.',
