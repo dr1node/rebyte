@@ -30,8 +30,8 @@ export default function ToolCard({ tool }: { tool: Tool }) {
         </p>
       </div>
       <div className="mt-5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-        <span className={`rounded-full bg-slate-100 px-3 py-1 ${tool.category === 'AUDIO' ? 'normal-case' : 'uppercase'} tracking-[0.18em] text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700`}>
-          {localizedTool.category}
+        <span className={`rounded-full bg-slate-100 px-3 py-1 uppercase tracking-[0.18em] text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700`}>
+          {tool.category === 'AUDIO' ? 'AUDIO' : localizedTool.category}
         </span>
         {tool.popular ? <span className="font-medium text-sky-600 dark:text-sky-400">{t('popular')}</span> : null}
       </div>
