@@ -19,7 +19,7 @@ export default function ToolCard({ tool }: { tool: Tool }) {
     >
       <div>
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-3xl bg-sky-50 shadow-sm ring-1 ring-sky-100 dark:bg-slate-800 dark:ring-slate-700">
-          <Image src={tool.icon} alt={`${tool.name} icon`} width={28} height={28} />
+          <Image src={tool.icon} alt={`${tool.name} icon`} width={28} height={28} className="dark:invert" />
         </div>
         <h3 className="text-base font-semibold text-slate-900 dark:text-white">{tool.name}</h3>
         <p
@@ -30,8 +30,8 @@ export default function ToolCard({ tool }: { tool: Tool }) {
         </p>
       </div>
       <div className="mt-5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-        <span className="rounded-full bg-slate-100 px-3 py-1 uppercase tracking-[0.18em] text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700">
-          {tool.category}
+        <span className={`rounded-full bg-slate-100 px-3 py-1 ${tool.category === 'AUDIO' ? 'normal-case' : 'uppercase'} tracking-[0.18em] text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700`}>
+          {localizedTool.category}
         </span>
         {tool.popular ? <span className="font-medium text-sky-600 dark:text-sky-400">{t('popular')}</span> : null}
       </div>

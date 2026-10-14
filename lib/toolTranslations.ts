@@ -25,6 +25,12 @@ const indonesianTools: Record<string, { name: string; description: string; categ
   calculator: { name: 'Kalkulator', description: 'Lakukan perhitungan cepat dengan antarmuka yang bersih dan responsif.', category: 'Utilitas' },
   'uuid-generator': { name: 'Generator UUID', description: 'Buat UUID versi 4 secara instan untuk identifier dan key unik.', category: 'Developer' },
   'base64-encoder': { name: 'Encoder Base64', description: 'Encode dan decode teks dengan cepat menggunakan encoding Base64.', category: 'Developer' },
+  'binary-translator': { name: 'Konverter Biner', description: 'Konversi teks ke biner UTF-8 dan biner kembali ke teks langsung di browser.', category: 'Developer' },
+  'mp3-cutter': { name: 'Pemotong MP3', description: 'Potong file MP3 berdasarkan waktu mulai dan selesai, lalu ekspor hasilnya langsung di browser.', category: 'Audio' },
+  'audio-converter': { name: 'Konverter Audio', description: 'Konversi audio WAV ke MP3 atau MP3 ke WAV langsung di browser.', category: 'Audio' },
+  'audio-visualizer': { name: 'Visualizer Audio', description: 'Tampilkan waveform dan spektrum frekuensi audio secara real-time saat diputar.', category: 'Audio' },
+  'mp3-metadata-editor': { name: 'Editor Metadata MP3', description: 'Edit tag ID3 judul, artis, album, tahun, track, genre, dan komentar secara lokal.', category: 'Audio' },
+  'audio-volume-booster': { name: 'Penguat / Normalizer Volume Audio', description: 'Atur gain atau normalisasi peak file WAV dan MP3 langsung di browser.', category: 'Audio' },
   'sha-256-generator': { name: 'Generator SHA-256', description: 'Buat hash SHA-256 untuk pesan, password, dan verifikasi.', category: 'Developer' },
   'password-generator': { name: 'Generator Password', description: 'Buat password aman dengan panjang dan karakter yang dapat disesuaikan.', category: 'Developer' },
   'jwt-decoder': { name: 'Decoder JWT', description: 'Decode token JWT secara instan tanpa mengunggah data.', category: 'Developer' },
@@ -46,5 +52,5 @@ const indonesianTools: Record<string, { name: string; description: string; categ
 
 export function getLocalizedTool(tool: Tool, language: Language) {
   if (language === 'id' && indonesianTools[tool.slug]) return indonesianTools[tool.slug];
-  return { name: tool.name, description: tool.description, category: tool.category };
+  return { name: tool.name, description: tool.description, category: tool.category === 'AUDIO' ? 'Audio' : tool.category };
 }

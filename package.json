@@ -9,9 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@breezystack/lamejs": "^1.2.7",
     "@huggingface/transformers": "^3.7.2",
     "@vercel/analytics": "^2.0.1",
+    "browser-id3-writer": "^6.4.0",
     "jsbarcode": "^3.11.5",
+    "jsmediatags": "^3.9.7",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.21.0",
     "next": "14.2.5",
@@ -23,6 +26,7 @@
   },
   "devDependencies": {
     "@types/jsbarcode": "^3.11.4",
+    "@types/jsmediatags": "^3.9.6",
     "@types/node": "20.14.2",
     "@types/qrcode": "^1.5.6",
     "@types/react": "18.3.3",

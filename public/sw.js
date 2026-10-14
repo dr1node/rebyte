@@ -1,7 +1,13 @@
-const CACHE_NAME = 'rebyte-v1';
+const CACHE_NAME = 'rebyte-v3';
 const APP_SHELL = [
   '/',
   '/tools',
+  '/tools/binary-translator',
+  '/tools/mp3-cutter',
+  '/tools/audio-converter',
+  '/tools/audio-visualizer',
+  '/tools/mp3-metadata-editor',
+  '/tools/audio-volume-booster',
   '/about',
   '/privacy',
   '/terms',
@@ -26,7 +32,13 @@ const APP_SHELL = [
   '/icons/jwt.svg',
   '/icons/qr.svg',
   '/icons/barcode.svg',
-  '/icons/markdown.svg'
+  '/icons/markdown.svg',
+  '/icons/binary.svg',
+  '/icons/mp3-cutter.svg',
+  '/icons/audio-converter.svg',
+  '/icons/audio-visualizer.svg',
+  '/icons/mp3-metadata.svg',
+  '/icons/audio-volume.svg'
 ];
 
 self.addEventListener('install', (event) => {

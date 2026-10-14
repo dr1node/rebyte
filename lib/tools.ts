@@ -1,4 +1,4 @@
-export type ToolCategory = 'PDF' | 'Image' | 'Text' | 'Developer' | 'Network' | 'Utility';
+export type ToolCategory = 'PDF' | 'Image' | 'Text' | 'Developer' | 'Network' | 'Utility' | 'AUDIO';
 
 export type Tool = {
   slug: string;
@@ -337,6 +337,54 @@ export const tools: Tool[] = [
     icon: '/icons/markdown.svg',
     related: ['json-formatter'],
   },
+  {
+    slug: 'binary-translator',
+    name: 'Binary Translator',
+    description: 'Convert text to UTF-8 binary and binary back to text directly in your browser.',
+    category: 'Developer',
+    icon: '/icons/binary.svg',
+    related: ['base64-encoder', 'url-encoder'],
+  },
+  {
+    slug: 'mp3-cutter',
+    name: 'MP3 Cutter',
+    description: 'Cut an MP3 file by start and end time and export the selected audio locally.',
+    category: 'AUDIO',
+    icon: '/icons/mp3-cutter.svg',
+    related: ['audio-converter', 'audio-visualizer'],
+  },
+  {
+    slug: 'audio-converter',
+    name: 'Audio Converter',
+    description: 'Convert WAV audio to MP3 or MP3 audio to WAV directly in your browser.',
+    category: 'AUDIO',
+    icon: '/icons/audio-converter.svg',
+    related: ['mp3-cutter', 'audio-visualizer'],
+  },
+  {
+    slug: 'audio-visualizer',
+    name: 'Audio Visualizer',
+    description: 'Visualize an audio track with live waveform and frequency spectrum animations.',
+    category: 'AUDIO',
+    icon: '/icons/audio-visualizer.svg',
+    related: ['mp3-cutter', 'audio-converter'],
+  },
+  {
+    slug: 'mp3-metadata-editor',
+    name: 'MP3 Metadata Editor',
+    description: 'Edit ID3 title, artist, album, year, track, genre, and comment tags locally.',
+    category: 'AUDIO',
+    icon: '/icons/mp3-metadata.svg',
+    related: ['audio-converter', 'mp3-cutter'],
+  },
+  {
+    slug: 'audio-volume-booster',
+    name: 'Audio Volume Booster / Normalizer',
+    description: 'Adjust audio gain or peak-normalize WAV and MP3 files in your browser.',
+    category: 'AUDIO',
+    icon: '/icons/audio-volume.svg',
+    related: ['audio-converter', 'audio-visualizer'],
+  },
 ];
 
 export type ToolSlug = (typeof tools)[number]['slug'];
@@ -348,4 +396,5 @@ export const categories = [
   { key: 'Developer', label: 'Developer' },
   { key: 'Network', label: 'Network' },
   { key: 'Utility', label: 'Utility' },
+  { key: 'AUDIO', label: 'Audio' },
 ] as const;

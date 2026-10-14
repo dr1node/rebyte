@@ -23,7 +23,7 @@ export default function ToolsPage({ searchParams }: { searchParams?: { category?
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-600"><LocalizedText en="Tools" id="Alat" /></p>
           <h1 className="text-4xl font-semibold tracking-tight text-slate-900 dark:text-white"><LocalizedText en="Browse utility tools" id="Jelajahi alat utilitas" /></h1>
           <p className="max-w-2xl text-slate-600 dark:text-slate-300">
-            <LocalizedText en="Explore tools by category and find the utility you need for PDF, image, text, developer, network, and utility tasks." id="Jelajahi alat berdasarkan kategori dan temukan utilitas untuk kebutuhan PDF, gambar, teks, developer, jaringan, dan utilitas." />
+            <LocalizedText en="Explore tools by category and find the utility you need for PDF, image, audio, text, developer, network, and utility tasks." id="Jelajahi alat berdasarkan kategori dan temukan utilitas untuk kebutuhan PDF, gambar, audio, teks, developer, jaringan, dan utilitas." />
           </p>
         </div>
 

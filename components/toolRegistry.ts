@@ -38,6 +38,12 @@ const BarcodeGeneratorTool = dynamic(() => import('./tools/BarcodeGeneratorTool'
 const RandomNumberGeneratorTool = dynamic(() => import('./tools/RandomNumberGeneratorTool'), { ssr: false });
 const JwtDecoderTool = dynamic(() => import('./tools/JwtDecoderTool'), { ssr: false });
 const UrlEncoderTool = dynamic(() => import('./tools/UrlEncoderTool'), { ssr: false });
+const BinaryTranslatorTool = dynamic(() => import('./tools/BinaryTranslatorTool'), { ssr: false });
+const Mp3CutterTool = dynamic(() => import('./tools/Mp3CutterTool'), { ssr: false });
+const AudioConverterTool = dynamic(() => import('./tools/AudioConverterTool'), { ssr: false });
+const AudioVisualizerTool = dynamic(() => import('./tools/AudioVisualizerTool'), { ssr: false });
+const Mp3MetadataEditorTool = dynamic(() => import('./tools/Mp3MetadataEditorTool'), { ssr: false });
+const AudioVolumeBoosterTool = dynamic(() => import('./tools/AudioVolumeBoosterTool'), { ssr: false });
 const RegexTesterTool = dynamic(() => import('./tools/RegexTesterTool'), { ssr: false });
 const UuidGeneratorTool = dynamic(() => import('./tools/UuidGeneratorTool'), { ssr: false });
 const Base64EncoderTool = dynamic(() => import('./tools/Base64EncoderTool'), { ssr: false });
@@ -80,6 +86,12 @@ export const toolComponents: Record<ToolSlug, ComponentType> = {
   'random-number-generator': RandomNumberGeneratorTool,
   'jwt-decoder': JwtDecoderTool,
   'url-encoder': UrlEncoderTool,
+  'binary-translator': BinaryTranslatorTool,
+  'mp3-cutter': Mp3CutterTool,
+  'audio-converter': AudioConverterTool,
+  'audio-visualizer': AudioVisualizerTool,
+  'mp3-metadata-editor': Mp3MetadataEditorTool,
+  'audio-volume-booster': AudioVolumeBoosterTool,
   'regex-tester': RegexTesterTool,
   'uuid-generator': UuidGeneratorTool,
   'base64-encoder': Base64EncoderTool,

@@ -23,7 +23,7 @@ export default function ToolDetailClient({ slug }: { slug: string }) {
             <div>
               <div className="flex items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 shadow-sm dark:bg-slate-900">
-                  <Image src={tool.icon} alt={`${localizedTool.name} icon`} width={32} height={32} />
+                  <Image src={tool.icon} alt={`${localizedTool.name} icon`} width={32} height={32} className="dark:invert" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-600">{localizedTool.category}</p>
