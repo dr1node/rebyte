@@ -10,7 +10,7 @@ import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
 import InstallAppButton from './InstallAppButton';
 import { useLanguage } from '../lib/LanguageContext';
-import { getLocalizedTool } from '../lib/toolTranslations';
+import { getLocalizedTool, getToolNames, toolMatchesSearch } from '../lib/toolTranslations';
 import { tools } from '../lib/tools';
 import { setBodyScrollLocked } from '../lib/bodyScrollLock';
 import logoImage from '../img/ReByte navbar logo.png';
@@ -22,10 +22,32 @@ const navigation = [
   { key: 'about', href: '/about' },
 ] as const;
 
+function SearchResultName({ tool }: { tool: (typeof tools)[number] }) {
+  const { language } = useLanguage();
+  const localizedTool = getLocalizedTool(tool, language);
+  const { alternateName } = getToolNames(tool, language);
+
+  return (
+    <>
+      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+        {localizedTool.name}
+        {alternateName ? (
+          <span className="ml-2 font-normal text-slate-500 dark:text-slate-400">
+            / {alternateName}
+          </span>
+        ) : null}
+      </p>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        {localizedTool.description}
+      </p>
+    </>
+  );
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -82,17 +104,12 @@ export default function Navbar() {
   }, [searchOpen]);
 
   const filteredTools = useMemo(() => {
-    const normalized = searchQuery.trim().toLowerCase();
-
-    if (!normalized) {
+    if (!searchQuery.trim()) {
       return tools.slice(0, 6);
     }
 
     return tools
-      .filter((tool) => {
-        const haystack = `${tool.name} ${tool.description} ${tool.category} ${tool.slug}`.toLowerCase();
-        return haystack.includes(normalized);
-      })
+      .filter((tool) => toolMatchesSearch(tool, searchQuery))
       .slice(0, 8);
   }, [searchQuery]);
 
@@ -226,8 +243,7 @@ export default function Navbar() {
                     className="flex w-full items-start justify-between rounded-2xl border border-transparent px-4 py-3 text-left transition hover:border-slate-200 hover:bg-slate-50 dark:hover:border-slate-800 dark:hover:bg-slate-900"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{tool.name}</p>
-                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{getLocalizedTool(tool, language).description}</p>
+                      <SearchResultName tool={tool} />
                     </div>
                     <span className="rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-600 dark:bg-sky-950/50 dark:text-sky-300">
                       {tool.category}

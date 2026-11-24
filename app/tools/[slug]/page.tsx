@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import ToolDetailClient from '../../../components/ToolDetailClient';
 import { tools } from '../../../lib/tools';
 
@@ -23,6 +23,7 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function ToolDetailPage({ params }: Props) {
+  if (params.slug === 'sha-256-generator') redirect('/tools/hash-generator');
   if (!tools.some((tool) => tool.slug === params.slug)) notFound();
   return <ToolDetailClient slug={params.slug} />;
 }

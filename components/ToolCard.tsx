@@ -4,24 +4,39 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Tool } from '../lib/tools';
 import { useLanguage } from '../lib/LanguageContext';
-import { getLocalizedTool } from '../lib/toolTranslations';
+import { getLocalizedTool, getToolNames } from '../lib/toolTranslations';
 
-export default function ToolCard({ tool }: { tool: Tool }) {
+export default function ToolCard({
+  tool,
+  showAlternateName = false,
+}: {
+  tool: Tool;
+  showAlternateName?: boolean;
+}) {
   const { language, t } = useLanguage();
   const localizedTool = getLocalizedTool(tool, language);
+  const { alternateName } = getToolNames(tool, language);
+  const shouldShowAlternateName = showAlternateName && Boolean(alternateName);
 
   return (
     <Link
       href={`/tools/${tool.slug}`}
       className="group flex h-full flex-col justify-between rounded-3xl border border-slate-200/80 bg-white/95 p-5 shadow-[0_18px_45px_-26px_rgba(15,23,42,0.28)] transition hover:-translate-y-1 hover:border-sky-300/60 hover:bg-slate-50 hover:shadow-[0_24px_50px_-24px_rgba(2,132,199,0.32)] dark:border-slate-800/80 dark:bg-slate-900/95 dark:hover:border-sky-500/50 dark:hover:bg-slate-950"
-      aria-label={`${t('openTool')} ${tool.name}`}
+      aria-label={`${t('openTool')} ${localizedTool.name}`}
       style={{ minWidth: '0' }}
     >
       <div>
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-3xl bg-sky-50 shadow-sm ring-1 ring-sky-100 dark:bg-slate-800 dark:ring-slate-700">
           <Image src={tool.icon} alt={`${tool.name} icon`} width={28} height={28} className="dark:invert" />
         </div>
-        <h3 className="text-base font-semibold text-slate-900 dark:text-white">{tool.name}</h3>
+        <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+          {localizedTool.name}
+          {shouldShowAlternateName ? (
+            <span className="mt-1 block text-sm font-normal text-slate-500 dark:text-slate-400">
+              / {alternateName}
+            </span>
+          ) : null}
+        </h3>
         <p
           className="mt-2 overflow-hidden text-sm leading-6 text-slate-600 dark:text-slate-300"
           style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}

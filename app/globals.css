@@ -16,8 +16,8 @@ html {
 
 html.dark {
   color-scheme: dark;
-  background-color: #020617;
-  color: #f8fafc;
+  background-color: #05070a;
+  color: #f1f5f9;
 }
 
 body {
@@ -27,8 +27,36 @@ body {
 }
 
 html.dark body {
-  background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
-  color: #f8fafc;
+  background:
+    radial-gradient(circle at 82% 0%, rgba(14, 165, 233, 0.055), transparent 28rem),
+    linear-gradient(145deg, #05070a 0%, #080b10 100%);
+  color: #f1f5f9;
+}
+
+/* Keep the dark theme near-black while preserving restrained blue depth. */
+html.dark [class*="dark:bg-slate-950"] {
+  background-color: rgba(5, 7, 10, 0.96);
+}
+
+html.dark [class*="dark:bg-slate-900"] {
+  background-color: rgba(9, 12, 18, 0.96);
+}
+
+html.dark [class*="dark:bg-slate-800"] {
+  background-color: #111722;
+}
+
+html.dark [class*="dark:border-slate-800"] {
+  border-color: rgba(30, 41, 59, 0.72);
+}
+
+html.dark [class*="dark:border-slate-700"] {
+  border-color: rgba(51, 65, 85, 0.82);
+}
+
+html.dark [class*="dark:bg-slate-950"] [class*="dark:bg-slate-900"],
+html.dark [class*="dark:bg-slate-900"] [class*="dark:bg-slate-900"] {
+  background-color: #0b0f16;
 }
 
 .theme-transition,

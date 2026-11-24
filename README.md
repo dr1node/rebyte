@@ -4,13 +4,13 @@ Free online tools, powered by your browser.
 
 Website: https://rebyte.my.id
 
-ReByte is a collection of 40+ free online tools designed for everyday tasks. The platform focuses on fast, simple, and privacy-conscious browser-based utilities.
+ReByte is a collection of 50+ free online tools designed for everyday tasks. The platform focuses on fast, simple, and privacy-conscious browser-based utilities.
 
 Most tools process data directly on the client side, allowing supported files and inputs to be handled within the browser without unnecessary uploads.
 
 Features
 
-- 40+ free online tools
+- 50+ free online tools
 - Client-side processing for supported tools
 - File processing directly in the browser
 - Downloadable results

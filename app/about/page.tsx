@@ -48,7 +48,7 @@ export default function AboutPage() {
 
             <div className="grid gap-4 sm:grid-cols-3">
               {[
-                { label: <LocalizedText en="Tools available" id="Alat tersedia" />, value: '40+' },
+                { label: <LocalizedText en="Tools available" id="Alat tersedia" />, value: '50+' },
                 { label: <LocalizedText en="No login needed" id="Tanpa login" />, value: '100%' },
                 { label: <LocalizedText en="Built for" id="Dibuat untuk" />, value: <LocalizedText en="browser-first workflows" id="alur kerja browser" /> },
               ].map((item) => (

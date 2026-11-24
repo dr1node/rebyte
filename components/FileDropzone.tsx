@@ -2,6 +2,7 @@
 
 import { useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
 import { FileUp } from 'lucide-react';
+import { useLanguage } from '../lib/LanguageContext';
 
 interface FileDropzoneProps {
   accept?: string;
@@ -30,13 +31,23 @@ export default function FileDropzone({ accept = '', multiple = false, label, hin
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const { language } = useLanguage();
+  const dropLabel = language === 'id' ? 'Lepaskan file di sini' : 'Drop files here';
+  const defaultHint = language === 'id'
+    ? `Seret dan lepaskan ${multiple ? 'file-file' : 'file'} di sini, atau klik untuk memilih.`
+    : `Drag and drop ${multiple ? 'files' : 'a file'} here, or click to browse.`;
+  const acceptedLabel = language === 'id' ? 'Format yang diterima:' : 'Accepted:';
 
   const processFiles = (selectedFiles: File[]) => {
     const files = multiple ? selectedFiles : selectedFiles.slice(0, 1);
     const invalidFile = files.find((file) => !matchesAcceptedType(file, accept));
 
     if (invalidFile) {
-      setValidationError(`Unsupported file type. Accepted: ${accept || 'any file'}.`);
+      setValidationError(
+        language === 'id'
+          ? `Jenis file tidak didukung. Format yang diterima: ${accept || 'semua file'}.`
+          : `Unsupported file type. Accepted: ${accept || 'any file'}.`,
+      );
       return;
     }
 
@@ -91,9 +102,9 @@ export default function FileDropzone({ accept = '', multiple = false, label, hin
         className="sr-only"
       />
       <FileUp className={`mx-auto h-8 w-8 transition-colors ${isDragging ? 'text-sky-600 dark:text-sky-400' : 'text-slate-400 dark:text-slate-500'}`} aria-hidden="true" />
-      <p className="mt-3 text-sm font-semibold text-slate-900 dark:text-white">{isDragging ? 'Drop files here' : label}</p>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{hint ?? `Drag and drop ${multiple ? 'files' : 'a file'} here, or click to browse.`}</p>
-      {accept ? <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">Accepted: {accept}</p> : null}
+      <p className="mt-3 text-sm font-semibold text-slate-900 dark:text-white">{isDragging ? dropLabel : label}</p>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{hint ?? defaultHint}</p>
+      {accept ? <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">{acceptedLabel} {accept}</p> : null}
       {validationError ? <p className="mt-3 text-sm font-medium text-rose-600 dark:text-rose-300" role="alert">{validationError}</p> : null}
     </div>
   );

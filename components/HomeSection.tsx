@@ -1,25 +1,56 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { categories, tools } from '../lib/tools';
 import ToolCard from './ToolCard';
 import SearchBar from './SearchBar';
 import FAQSection from './FAQSection';
 import FeedbackSection from './FeedbackSection';
 import { useLanguage } from '../lib/LanguageContext';
+import {
+  getRecentToolSlugs,
+  RECENT_TOOLS_CHANGE_EVENT,
+  RECENT_TOOLS_STORAGE_KEY,
+} from '../lib/recentTools';
 
 export default function HomeSection() {
   const [filteredTools, setFilteredTools] = useState(tools);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [recentSlugs, setRecentSlugs] = useState<string[]>([]);
   const { t } = useLanguage();
+  const RECENT_TOOLS_DISPLAY_LIMIT = 6;
+
+  useEffect(() => {
+    const syncRecentTools = () => setRecentSlugs(getRecentToolSlugs(12));
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === RECENT_TOOLS_STORAGE_KEY) syncRecentTools();
+    };
+
+    syncRecentTools();
+    window.addEventListener(RECENT_TOOLS_CHANGE_EVENT, syncRecentTools);
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener(RECENT_TOOLS_CHANGE_EVENT, syncRecentTools);
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, []);
 
   const popularTools = useMemo(() => {
     const popular = tools.filter((tool) => tool.popular);
     if (popular.length >= 6) return popular.slice(0, 6);
     return [...popular, ...tools.filter((tool) => !tool.popular).slice(0, 6 - popular.length)];
   }, []);
+
+  const recentTools = useMemo(() => {
+    const toolBySlug = new Map(tools.map((tool) => [tool.slug, tool]));
+    return recentSlugs
+      .map((slug) => toolBySlug.get(slug))
+      .filter((tool): tool is (typeof tools)[number] => Boolean(tool))
+      .slice(0, RECENT_TOOLS_DISPLAY_LIMIT);
+  }, [recentSlugs]);
 
   return (
     <section className="relative overflow-hidden py-10 sm:py-14">
@@ -63,7 +94,9 @@ export default function HomeSection() {
                   </div>
                   <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {filteredTools.length > 0 ? (
-                      filteredTools.slice(0, 6).map((tool) => <ToolCard key={tool.slug} tool={tool} />)
+                      filteredTools.slice(0, 6).map((tool) => (
+                        <ToolCard key={tool.slug} tool={tool} showAlternateName />
+                      ))
                     ) : (
                       <div className="rounded-3xl border border-slate-200/80 bg-white/95 p-10 text-center shadow-sm dark:border-slate-800/80 dark:bg-slate-950/95">
                         <p className="text-slate-700 dark:text-slate-300">{t('noToolsMatch')}</p>
@@ -91,6 +124,26 @@ export default function HomeSection() {
               {t('viewAllTools')}
             </Link>
           </div>
+        </section>
+
+        <section className="mt-16">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">
+              {t('recentlyUsedTools')}
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-900 dark:text-white">
+              {t('recentlyUsedToolsTitle')}
+            </h2>
+          </div>
+          {recentTools.length > 0 ? (
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+              {recentTools.map((tool) => <ToolCard key={tool.slug} tool={tool} />)}
+            </div>
+          ) : (
+            <div className="mt-8 rounded-3xl border border-slate-200/80 bg-white/90 p-6 text-sm text-slate-600 dark:border-slate-800/70 dark:bg-slate-950/95 dark:text-slate-300">
+              {t('noRecentlyUsedTools')}
+            </div>
+          )}
         </section>
 
         <div className="mt-16">
