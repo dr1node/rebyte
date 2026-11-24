@@ -3,13 +3,17 @@
 import { useState } from 'react';
 import { ArrowLeftRight, Copy } from 'lucide-react';
 import { useLanguage } from '../../lib/LanguageContext';
+import FileDropzone from '../FileDropzone';
 
 type ConversionMode = 'text-to-binary' | 'binary-to-text';
+type InputSource = 'type' | 'file';
 
 export default function BinaryTranslatorTool() {
   const { language } = useLanguage();
   const [mode, setMode] = useState<ConversionMode>('text-to-binary');
+  const [inputSource, setInputSource] = useState<InputSource>('type');
   const [input, setInput] = useState('');
+  const [file, setFile] = useState<File | null>(null);
   const [output, setOutput] = useState('');
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
@@ -18,23 +22,44 @@ export default function BinaryTranslatorTool() {
   const handleModeChange = (nextMode: ConversionMode) => {
     setMode(nextMode);
     setInput('');
+    setFile(null);
     setOutput('');
     setError('');
     setCopied(false);
   };
 
-  const handleConvert = () => {
+  const handleConvert = async () => {
     setError('');
     setOutput('');
     setCopied(false);
 
+    if (inputSource === 'file' && !file) {
+      setError(isIndonesian ? 'Pilih file teks terlebih dahulu.' : 'Choose a text file first.');
+      return;
+    }
+
+    let value = input;
+    if (inputSource === 'file' && file) {
+      if (file.size > 10 * 1024 * 1024) {
+        setError(isIndonesian ? 'Ukuran file maksimum adalah 10 MB.' : 'The maximum file size is 10 MB.');
+        return;
+      }
+
+      try {
+        value = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(await file.arrayBuffer());
+      } catch {
+        setError(isIndonesian ? 'File harus berisi teks UTF-8 yang valid.' : 'The file must contain valid UTF-8 text.');
+        return;
+      }
+    }
+
     if (mode === 'text-to-binary') {
-      const bytes = new TextEncoder().encode(input);
+      const bytes = new TextEncoder().encode(value);
       setOutput(Array.from(bytes, (byte) => byte.toString(2).padStart(8, '0')).join(' '));
       return;
     }
 
-    const bits = input.replace(/\s/g, '');
+    const bits = value.replace(/\s/g, '');
     if (!/^[01]*$/.test(bits)) {
       setError(isIndonesian ? 'Input hanya boleh berisi 0, 1, dan spasi.' : 'Input can contain only 0, 1, and whitespace.');
       return;
@@ -71,10 +96,16 @@ export default function BinaryTranslatorTool() {
     ? {
         textToBinary: 'Teks ke biner',
         binaryToText: 'Biner ke teks',
+        typeInput: 'Ketik langsung',
+        uploadInput: 'Unggah file teks',
+        fileLabel: 'Pilih file teks untuk dikonversi',
+        fileHint: 'Format .txt atau teks biasa UTF-8, maksimum 10 MB.',
+        removeFile: 'Hapus file',
         inputText: mode === 'text-to-binary' ? 'Teks' : 'Biner',
         outputText: mode === 'text-to-binary' ? 'Hasil biner (UTF-8)' : 'Hasil teks (UTF-8)',
         textPlaceholder: 'Ketik atau tempel teks di sini',
         binaryPlaceholder: 'Contoh: 01001000 01101001',
+        fileName: 'File',
         convert: 'Konversi',
         copy: 'Salin hasil',
         copied: 'Tersalin',
@@ -83,10 +114,16 @@ export default function BinaryTranslatorTool() {
     : {
         textToBinary: 'Text to binary',
         binaryToText: 'Binary to text',
+        typeInput: 'Type directly',
+        uploadInput: 'Upload a text file',
+        fileLabel: 'Choose a text file to convert',
+        fileHint: 'UTF-8 .txt or plain-text file, up to 10 MB.',
+        removeFile: 'Remove file',
         inputText: mode === 'text-to-binary' ? 'Text' : 'Binary',
         outputText: mode === 'text-to-binary' ? 'Binary output (UTF-8)' : 'Text output (UTF-8)',
         textPlaceholder: 'Type or paste text here',
         binaryPlaceholder: 'Example: 01001000 01101001',
+        fileName: 'File',
         convert: 'Convert',
         copy: 'Copy result',
         copied: 'Copied',
@@ -114,23 +151,77 @@ export default function BinaryTranslatorTool() {
           ))}
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-900 dark:text-white">
-            {labels.inputText}
-            <textarea
-              rows={9}
-              value={input}
-              onChange={(event) => {
-                setInput(event.target.value);
+        <div className="mb-5 flex flex-wrap gap-3" role="group" aria-label={isIndonesian ? 'Sumber input' : 'Input source'}>
+          {(['type', 'file'] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={inputSource === value}
+              onClick={() => {
+                setInputSource(value);
+                setFile(null);
                 setOutput('');
                 setError('');
                 setCopied(false);
               }}
-              placeholder={mode === 'text-to-binary' ? labels.textPlaceholder : labels.binaryPlaceholder}
-              spellCheck={false}
-              className="mt-3 w-full resize-y rounded-3xl border border-slate-200/80 bg-slate-50 p-4 font-mono text-sm font-normal text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-            />
-          </label>
+              className={`rounded-3xl border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 ${inputSource === value ? 'border-sky-500 bg-sky-50 text-slate-900 dark:border-sky-400 dark:bg-slate-900 dark:text-white' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300'}`}
+            >
+              {value === 'type' ? labels.typeInput : labels.uploadInput}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-2">
+          <div className="space-y-4">
+            {inputSource === 'type' ? (
+              <label className="block text-sm font-semibold text-slate-900 dark:text-white">
+                {labels.inputText}
+                <textarea
+                  rows={9}
+                  value={input}
+                  onChange={(event) => {
+                    setInput(event.target.value);
+                    setOutput('');
+                    setError('');
+                    setCopied(false);
+                  }}
+                  placeholder={mode === 'text-to-binary' ? labels.textPlaceholder : labels.binaryPlaceholder}
+                  spellCheck={false}
+                  className="mt-3 w-full resize-y rounded-3xl border border-slate-200/80 bg-slate-50 p-4 font-mono text-sm font-normal text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
+                />
+              </label>
+            ) : (
+              <div className="space-y-3">
+                <FileDropzone
+                  accept=".txt,text/plain"
+                  label={labels.fileLabel}
+                  hint={labels.fileHint}
+                  onFiles={(files) => {
+                    setFile(files[0] ?? null);
+                    setOutput('');
+                    setError('');
+                    setCopied(false);
+                  }}
+                />
+                {file ? (
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3 text-sm dark:bg-slate-900">
+                    <span className="break-all text-slate-700 dark:text-slate-300">{labels.fileName}: {file.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFile(null);
+                        setOutput('');
+                        setError('');
+                      }}
+                      className="font-semibold text-sky-700 hover:text-sky-600 dark:text-sky-300"
+                    >
+                      {labels.removeFile}
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            )}
+          </div>
 
           <label className="block text-sm font-semibold text-slate-900 dark:text-white">
             {labels.outputText}
@@ -143,7 +234,6 @@ export default function BinaryTranslatorTool() {
             />
           </label>
         </div>
-
         {error ? (
           <p role="alert" className="mt-4 rounded-3xl border border-rose-300/70 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-600/60 dark:bg-rose-900/30 dark:text-rose-200">
             {error}

@@ -3,6 +3,12 @@ import dynamic from 'next/dynamic';
 import type { ToolSlug } from '../lib/tools';
 
 const JsonFormatterTool = dynamic(() => import('./tools/JsonFormatterTool'), { ssr: false });
+const CsvJsonConverterTool = dynamic(() => import('./tools/CsvJsonConverterTool'), { ssr: false });
+const UnitConverterTool = dynamic(() => import('./tools/UnitConverterTool'), { ssr: false });
+const XmlFormatterTool = dynamic(() => import('./tools/XmlFormatterTool'), { ssr: false });
+const DateDifferenceCalculatorTool = dynamic(() => import('./tools/DateDifferenceCalculatorTool'), { ssr: false });
+const CssGradientShadowGeneratorTool = dynamic(() => import('./tools/CssGradientShadowGeneratorTool'), { ssr: false });
+const QrCodeScannerTool = dynamic(() => import('./tools/QrCodeScannerTool'), { ssr: false });
 const ColorPickerConverterTool = dynamic(() => import('./tools/ColorPickerConverterTool'), { ssr: false });
 const TimestampConverterTool = dynamic(() => import('./tools/TimestampConverterTool'), { ssr: false });
 const TextDiffCheckerTool = dynamic(() => import('./tools/TextDiffCheckerTool'), { ssr: false });
@@ -47,10 +53,21 @@ const AudioVolumeBoosterTool = dynamic(() => import('./tools/AudioVolumeBoosterT
 const RegexTesterTool = dynamic(() => import('./tools/RegexTesterTool'), { ssr: false });
 const UuidGeneratorTool = dynamic(() => import('./tools/UuidGeneratorTool'), { ssr: false });
 const Base64EncoderTool = dynamic(() => import('./tools/Base64EncoderTool'), { ssr: false });
-const Sha256GeneratorTool = dynamic(() => import('./tools/Sha256GeneratorTool'), { ssr: false });
+const HashGeneratorTool = dynamic(() => import('./tools/HashGeneratorTool'), { ssr: false });
+const InvoiceMakerTool = dynamic(() => import('./tools/InvoiceMakerTool'), { ssr: false });
+const PhotoRedactorTool = dynamic(() => import('./tools/PhotoRedactorTool'), { ssr: false });
+const MonthlyBudgetTool = dynamic(() => import('./tools/MonthlyBudgetTool'), { ssr: false });
+const RecipeScalerTool = dynamic(() => import('./tools/RecipeScalerTool'), { ssr: false });
+const PhotoCollageMakerTool = dynamic(() => import('./tools/PhotoCollageMakerTool'), { ssr: false });
 
 export const toolComponents: Record<ToolSlug, ComponentType> = {
   'json-formatter': JsonFormatterTool,
+  'csv-json-converter': CsvJsonConverterTool,
+  'unit-converter': UnitConverterTool,
+  'xml-formatter': XmlFormatterTool,
+  'date-difference-calculator': DateDifferenceCalculatorTool,
+  'css-gradient-shadow-generator': CssGradientShadowGeneratorTool,
+  'qr-code-scanner': QrCodeScannerTool,
   'color-picker-converter': ColorPickerConverterTool,
   'timestamp-converter': TimestampConverterTool,
   'text-diff-checker': TextDiffCheckerTool,
@@ -95,5 +112,10 @@ export const toolComponents: Record<ToolSlug, ComponentType> = {
   'regex-tester': RegexTesterTool,
   'uuid-generator': UuidGeneratorTool,
   'base64-encoder': Base64EncoderTool,
-  'sha-256-generator': Sha256GeneratorTool,
+  'hash-generator': HashGeneratorTool,
+  'invoice-maker': InvoiceMakerTool,
+  'photo-redactor': PhotoRedactorTool,
+  'monthly-budget': MonthlyBudgetTool,
+  'recipe-scaler': RecipeScalerTool,
+  'photo-collage-maker': PhotoCollageMakerTool,
 };

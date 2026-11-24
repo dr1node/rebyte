@@ -1,16 +1,21 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect } from 'react';
 import Breadcrumb from './Breadcrumb';
 import ToolRenderer from './ToolRenderer';
 import LocalizedToolContent from './LocalizedToolContent';
 import { useLanguage } from '../lib/LanguageContext';
 import { getLocalizedTool } from '../lib/toolTranslations';
 import { tools } from '../lib/tools';
+import { recordRecentTool } from '../lib/recentTools';
 
 export default function ToolDetailClient({ slug }: { slug: string }) {
   const { language } = useLanguage();
   const tool = tools.find((item) => item.slug === slug);
+  useEffect(() => {
+    if (tool) recordRecentTool(tool.slug);
+  }, [slug, tool]);
   if (!tool) return null;
   const localizedTool = getLocalizedTool(tool, language);
 

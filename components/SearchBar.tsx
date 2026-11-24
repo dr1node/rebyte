@@ -3,6 +3,7 @@
 import { useState, type ChangeEvent } from 'react';
 import type { Tool } from '../lib/tools';
 import { useLanguage } from '../lib/LanguageContext';
+import { toolMatchesSearch } from '../lib/toolTranslations';
 
 type CategoryOption = {
   key: string;
@@ -33,15 +34,9 @@ export default function SearchBar({
   const { t } = useLanguage();
 
   const filterTools = (value: string, category: string) => {
-    const normalized = value.toLowerCase().trim();
-
     return tools.filter((tool) => {
       const matchesCategory = !category || tool.category.toLowerCase() === category.toLowerCase();
-      const matchesQuery =
-        !normalized ||
-        tool.name.toLowerCase().includes(normalized) ||
-        tool.category.toLowerCase().includes(normalized) ||
-        tool.description.toLowerCase().includes(normalized);
+      const matchesQuery = toolMatchesSearch(tool, value);
 
       return matchesCategory && matchesQuery;
     });
